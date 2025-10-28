@@ -12,6 +12,18 @@ import pp_extracted
 import pp_rules
 
 
+proc match_rules_for_page*(rules: seq[pp_rules.Rule], page: int
+                           ): seq[pp_rules.Rule] =
+    ##[ filters rules for the specified page.
+    ]##
+    result = @[]
+    for rule in rules:
+        if rule.page == -1:  # match all pages
+            result.add(rule); continue
+        if rule.page == page:
+            result.add(rule); continue
+
+
 proc extract_text*(page: PdfPage, x, y, w, h: float): string =
     ##[
     ]##
@@ -44,6 +56,9 @@ proc extract_blocks*(rules: seq[pp_rules.Rule], fname: Path
 
     result = @[]
     for n in pdf_page.pdf_pages(pdf):
+        let rules_page = match_rules_for_page(rules, n)
+        if len(rules_page) < 1:
+            continue
         let page = pdf_page.pdf_page(pdf, n)
         for rule in rules_page:
             let blk = extract_block(page, rule)
