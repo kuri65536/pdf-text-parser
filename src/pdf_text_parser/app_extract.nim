@@ -2,6 +2,7 @@
 
 License: MIT, see LICENSE
 ]##
+import logging
 import std/paths
 
 import pdf_doc
@@ -37,6 +38,7 @@ proc extract_block*(page: PdfPage, rule: pp_rules.Rule): pp_extracted.Block =
         case op.kind:
         of ppk_clip:
             let tmp = extract_text(page, op.x, op.y, op.w, op.h)
+            debug("extract:clip: " & rule.name & " => " & tmp)
             return Block(name: rule.name, text: tmp)
         of ppk_invalid:
             discard
@@ -52,6 +54,7 @@ proc extract_blocks*(rules: seq[pp_rules.Rule], fname: Path
     var pdf = pdf_doc.pdf_open(fname)
     if isNil(pdf):
         return @[]
+    debug("extract:opened PDF file ... " & fname.string)
     defer: pdf_doc.pdf_close(pdf)
 
     result = @[]

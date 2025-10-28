@@ -2,6 +2,7 @@
 
 License: MIT, see LICENSE
 ]##
+import logging
 import os
 import system
 
@@ -14,7 +15,9 @@ proc main(args: seq[string]): int =
     let opts = options(args)
     if opts.n_quit != 0:
         return opts.n_quit
+    info("main: loop over " & $len(opts.filenames))
     for filename in opts.filenames:
+        debug("main: extract 1 PDF " & filename.string)
         let blks = app_extract.extract_blocks(opts.rules, filename)
         app_format.format(blks)
 

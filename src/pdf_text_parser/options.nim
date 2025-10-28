@@ -2,6 +2,7 @@
 
 License: MIT, see LICENSE
 ]##
+import logging
 import std/paths
 import tables
 
@@ -32,7 +33,7 @@ proc usage(): void =
 proc parse_outname(args: seq[string]): Path =
     ##[ gets the specified output name
     ]##
-    if len(args[0]) < 1:
+    if len(args) < 1 or len(args[0]) < 1:
         return Path("/dev/stdout")
     assert len(args) < 2, $args
     result = Path(args[0])
@@ -59,6 +60,9 @@ func check_files(args: seq[string]): seq[Path] =
 proc options*(args: seq[string]): Options =
     ##[ parses the command line options.
     ]##
+    logging.addHandler(logging.newConsoleLogger())
+    logging.setLogFilter(lvlNotice)
+
     let ret = Options(n_quit: 0,
                       )
 
