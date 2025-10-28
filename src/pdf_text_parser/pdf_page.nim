@@ -14,6 +14,19 @@ type
     page*: pointer
 
 
+proc pdf_page_size*(page: PdfPage): tuple[w, h: float] =
+    ##[ returns the size of PDF page.
+    ]##
+    let p_page = page.page
+    var (w, h) = (0.0, 0.0)
+    {.emit: """ {double _w, _h;
+                 poppler_page_get_size(`p_page`, &_w, &_h);
+                 `w` = _w; `h` = _h;
+                 }
+            """.}
+    return (w, h)
+
+
 proc pdf_pages*(pdf: PdfDoc): seq[int] =
     ##[ gets a sequence of the page numbers.
     ]##

@@ -63,6 +63,8 @@ proc extract_blocks*(rules: seq[pp_rules.Rule], fname: Path
         if len(rules_page) < 1:
             continue
         let page = pdf_page.pdf_page(pdf, n)
+        let (w, h) = pdf_page_size(page)
+        debug("extract:load page ... " & $n & " => (" & $w & "," & $h & ")")
         for rule in rules_page:
             let blk = extract_block(page, rule)
             if len(blk.name) < 1: break
