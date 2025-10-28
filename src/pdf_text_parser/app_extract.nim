@@ -5,9 +5,17 @@ License: MIT, see LICENSE
 import std/paths
 
 import pdf_doc
+import pdf_get_text
 import pdf_page
 
+import pp_extracted
 import pp_rules
+
+
+proc extract_text*(page: PdfPage, x, y, w, h: float): string =
+    ##[
+    ]##
+    return pdf_get_text.pdf_get_text(page, x, y, w, h)
 
 
 proc extract_block*(page: PdfPage, rule: pp_rules.Rule): pp_extracted.Block =
@@ -15,6 +23,9 @@ proc extract_block*(page: PdfPage, rule: pp_rules.Rule): pp_extracted.Block =
     ]##
     for op in rule.ops:
         case op.kind:
+        of ppk_clip:
+            let tmp = extract_text(page, op.x, op.y, op.w, op.h)
+            return Block(name: rule.name, text: tmp)
         of ppk_invalid:
             discard
         #[else:

@@ -5,6 +5,7 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/options_macro.nim \
      src/pdf_text_parser/pdf_common.nim \
      src/pdf_text_parser/pdf_doc.nim \
+     src/pdf_text_parser/pdf_get_text.nim \
      src/pdf_text_parser/pdf_page.nim \
      src/pdf_text_parser/pp_inifile.nim \
      src/pdf_text_parser/pp_rules.nim \
