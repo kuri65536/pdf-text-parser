@@ -10,6 +10,7 @@ type
     ppk_invalid,
     ppk_clip,
     ppk_parse,
+    ppk_csv,
 
   OpBase* = ref OpBaseObj
   OpBaseObj* = object of RootObj
@@ -26,6 +27,12 @@ type
     name_src*: string
     fmt_parse*: string
     fmt_store*: string
+
+  TupleCsv = tuple[name, fmt: string]
+
+  OpFormatCsv* = ref OpFormatCsvObj
+  OpFormatCsvObj* = object of pp_rules.OpBase
+    outs*: seq[TupleCsv]
 
   Rule* = object of RootObj
     page*: int

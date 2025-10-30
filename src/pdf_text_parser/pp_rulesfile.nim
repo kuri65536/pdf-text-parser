@@ -11,6 +11,7 @@ import tables
 import pp_inifile
 import pp_rules
 import pp_parse_parse
+import pp_parse_output
 
 
 proc parse_extract_as_seq(val: string): seq[Rule] =
@@ -56,6 +57,8 @@ proc parse_op(tbl: SectionTable, key, val: string): seq[Rule] =
         return parse_extract_as_seq(val)
     of "parse":
         return pp_parse_parse.parse_as_seq(val)
+    of "output_csv":
+        return pp_parse_output.parse_as_seq(val)
     else:
         error("rules:ignored the invalid key: ", $key, " and its value", $val)
 

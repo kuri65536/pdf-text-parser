@@ -9,7 +9,9 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pdf_doc.nim \
      src/pdf_text_parser/pdf_get_text.nim \
      src/pdf_text_parser/pdf_page.nim \
+     src/pdf_text_parser/pp_format.nim \
      src/pdf_text_parser/pp_inifile.nim \
+     src/pdf_text_parser/pp_parse_output.nim \
      src/pdf_text_parser/pp_parse_parse.nim \
      src/pdf_text_parser/pp_rules.nim \
      src/pdf_text_parser/pp_rulesfile.nim \

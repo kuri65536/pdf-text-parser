@@ -21,7 +21,7 @@ proc main(args: seq[string]): int =
         debug("main: extract 1 PDF " & filename.string)
         let blks = app_extract.extract_blocks(opts.rules, filename)
         let blk2 = app_parse.parse(opts.rules, blks)
-        app_format.format(blk2)
+        app_format.format(opts.rules, blk2)
 
 
 when isMainModule:
