@@ -8,6 +8,7 @@ import system
 
 import pdf_text_parser/app_extract
 import pdf_text_parser/app_format
+import pdf_text_parser/app_parse
 import pdf_text_parser/options
 
 
@@ -19,7 +20,8 @@ proc main(args: seq[string]): int =
     for filename in opts.filenames:
         debug("main: extract 1 PDF " & filename.string)
         let blks = app_extract.extract_blocks(opts.rules, filename)
-        app_format.format(blks)
+        let blk2 = app_parse.parse(opts.rules, blks)
+        app_format.format(blk2)
 
 
 when isMainModule:

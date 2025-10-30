@@ -9,3 +9,12 @@ type
     name*: string
     text*: string
 
+
+proc find*(src: openarray[pp_extracted.Block], id: string): pp_extracted.Block =
+    ##[
+    ]##
+    for i in src:
+        if i.name == id:
+            return i
+    return pp_extracted.Block()
+

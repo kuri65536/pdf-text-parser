@@ -1,6 +1,8 @@
 
 src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/app_extract.nim \
+     src/pdf_text_parser/app_parse.nim \
+     src/pdf_text_parser/app_parse_datetime.nim \
      src/pdf_text_parser/options.nim \
      src/pdf_text_parser/options_macro.nim \
      src/pdf_text_parser/pdf_common.nim \
@@ -8,6 +10,7 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pdf_get_text.nim \
      src/pdf_text_parser/pdf_page.nim \
      src/pdf_text_parser/pp_inifile.nim \
+     src/pdf_text_parser/pp_parse_parse.nim \
      src/pdf_text_parser/pp_rules.nim \
      src/pdf_text_parser/pp_rulesfile.nim \
 

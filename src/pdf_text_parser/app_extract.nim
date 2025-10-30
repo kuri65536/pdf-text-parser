@@ -37,13 +37,12 @@ proc extract_block*(page: PdfPage, rule: pp_rules.Rule): pp_extracted.Block =
     for op in rule.ops:
         case op.kind:
         of ppk_clip:
-            let tmp = extract_text(page, op.x, op.y, op.w, op.h)
+            let opc = OpExt(op)
+            let tmp = extract_text(page, opc.x, opc.y, opc.w, opc.h)
             debug("extract:clip: " & rule.name & " => " & tmp)
             return Block(name: rule.name, text: tmp)
-        of ppk_invalid:
+        else:  # ppk_invalid:
             discard
-        #[else:
-            discard]#
     return Block(name: "")  # returns as an invalid.
 
 

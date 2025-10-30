@@ -8,18 +8,16 @@ import std/paths
 import strutils
 import tables
 
-import pp_rules
 import pp_inifile
+import pp_rules
+import pp_parse_parse
 
 
 proc parse_extract_as_seq(val: string): seq[Rule] =
     ##[ parses the `val` as `extract` rule in a opt-val pair.
     ]##
     debug("rules:extract: parse " & val)
-    let tmp = block:
-        var tmp2: seq[string]
-        for i in val.split(","): tmp2.add(i.strip())
-        tmp2
+    let tmp = pp_rules.split_to_cells(val)
     if len(tmp) < 1:
         error("rules:extract: ignored the invalid line: " & val); return @[]
     let name = tmp[0]
@@ -41,8 +39,10 @@ proc parse_extract_as_seq(val: string): seq[Rule] =
         page: -1,
         name: name,
         ops: @[
+            OpBase(
             OpExt(kind: pp_rules.operation_kind.ppk_clip,
                   x: x, y: y, w: w, h: h)
+            )
         ]
     )]
 
@@ -54,6 +54,8 @@ proc parse_op(tbl: SectionTable, key, val: string): seq[Rule] =
     case key.strip().toLower():
     of "extract":
         return parse_extract_as_seq(val)
+    of "parse":
+        return pp_parse_parse.parse_as_seq(val)
     else:
         error("rules:ignored the invalid key: ", $key, " and its value", $val)
 
