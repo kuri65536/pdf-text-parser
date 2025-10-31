@@ -5,6 +5,7 @@ the short and refactored version of a `ini` file parser from my
 
 License: MIT, see LICENSE
 ]##
+import logging
 import std/paths
 import strutils
 import tables
@@ -16,7 +17,8 @@ type
 
   ParseResult = enum ## enumeration of all events that may occur when parsing
     opt_and_val,        ## end of file reached
-    opt_or_invalid,
+    val_or_invalid,
+    comment,
     in_empty,
     in_val,
     section,            ## a ``[section]`` has been parsed
@@ -82,11 +84,11 @@ proc parse_section_line(line: string): string =
 
 proc parse_option_value(line: string
                         ): tuple[st: ParseResult, opt, val: string] =
-    const splitter_opt_val = ["=", ":", ]
+    const splitter_opt_val = ["=", ]  # ":", ]
     var (f_opt, ) = (true, )
 
     if is_comment_line(line):
-        return (in_empty, "", "")
+        return (comment, "", "")
     let sec = parse_section_line(line)
     if len(sec) > 0:
         return (section, "", sec)
@@ -105,8 +107,10 @@ proc parse_option_value(line: string
             if is_comment(ch):
                 break
             val &= $ch
-    if f_opt:
-        return (opt_or_invalid, "", opt)
+    if f_opt and len(opt.strip()) < 1:
+        return (in_empty, "", "")
+    elif f_opt:
+        return (val_or_invalid, "", opt)
 
     let val0 = val.strip()
     return (opt_and_val, opt, val0)
@@ -120,18 +124,26 @@ proc load_ini*(filename: Path): SectionTable =
     defer: fp.close()
 
     var stat = ParserStatus()
+    var prev = ""
     stat.sections[""] = @[]
     for line in lines(fp):
         let (st, opt, val) = parse_option_value(line)
+        error("load_ini:line is:", $st, ", opt:", opt)
         case st:
         of section:
             stat.cur_section_name = val
             stat.sections[val] = @[]
         of opt_and_val:
             stat.sections[stat.cur_section_name].add((opt, val))
-        of opt_or_invalid:
-            discard
+            prev = opt
+        of val_or_invalid:
+            if prev != "":
+                let (pop, pvl) = stat.sections[stat.cur_section_name][^1]
+                stat.sections[stat.cur_section_name][^1] = (pop, pvl & val)
+        of comment:
+            if prev != "":
+                discard
         else:
-            discard
+            prev = ""
     return stat.sections
 
