@@ -6,7 +6,7 @@ the short and refactored version of a `ini` file parser from my
 License: MIT, see LICENSE
 ]##
 import logging
-import std/paths
+import streams
 import strutils
 import tables
 
@@ -116,17 +116,14 @@ proc parse_option_value(line: string
     return (opt_and_val, opt, val0)
 
 
-proc load_ini*(filename: Path): SectionTable =
+proc load_ini*(strm: Stream): SectionTable =
     ##[
         .. note:: todo ... the multiple value lines
     ]##
-    var fp = open(filename.string, fmRead)
-    defer: fp.close()
-
     var stat = ParserStatus()
     var prev = ""
     stat.sections[""] = @[]
-    for line in lines(fp):
+    for line in strm.lines():
         let (st, opt, val) = parse_option_value(line)
         error("load_ini:line is:", $st, ", opt:", opt)
         case st:

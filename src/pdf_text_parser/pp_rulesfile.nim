@@ -5,6 +5,7 @@ License: MIT, see LICENSE
 import logging
 import os
 import std/paths
+import streams
 import strutils
 import tables
 
@@ -80,7 +81,9 @@ proc load*(filename: string): seq[Rule] =
         error("rules:load: rules file does not exist: " & path.string)
         return @[]
 
-    let tbl = load_ini(path)
+    let strm = newFileStream(path.string, fmRead)
+    defer: strm.close()
+    let tbl = load_ini(strm)
     if len(tbl) < 1:
         error("rules:load: can't load ini contents")
         return @[]
