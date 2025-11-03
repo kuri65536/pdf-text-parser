@@ -118,7 +118,6 @@ proc parse_option_value(line: string
 
 proc load_ini*(strm: Stream): SectionTable =
     ##[
-        .. note:: todo ... the multiple value lines
     ]##
     var stat = ParserStatus()
     var prev = ""
@@ -129,7 +128,8 @@ proc load_ini*(strm: Stream): SectionTable =
         case st:
         of section:
             stat.cur_section_name = val
-            stat.sections[val] = @[]
+            if not stat.sections.contains(val):
+                stat.sections[val] = @[]
         of opt_and_val:
             stat.sections[stat.cur_section_name].add((opt, val))
             prev = opt

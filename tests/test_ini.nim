@@ -49,3 +49,31 @@ block:
     assert len(tbl["aaa"]) < 1
     assert len(tbl["bbb"]) < 1
 
+
+## combination
+block:
+    let strm = newStringStream("""
+
+        0 = 1
+
+        [aaa]
+        a = 1
+        aa = 1
+
+
+        [bbb]
+
+        bbb = 1
+
+        bb = 1
+
+        [aaa]
+        aaa = 1
+    """)
+
+    let tbl = load_ini(strm)
+    assert len(tbl[""]) == 1
+    assert len(tbl["aaa"]) == 3, $tbl["aaa"]
+    assert len(tbl["bbb"]) == 2
+
+
