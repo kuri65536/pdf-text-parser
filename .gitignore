@@ -1,0 +1,8 @@
+/html
+/nimcache
+/pdf-text-parser
+/tests/test*.pdf
+/tests/test_ini
+/tests/test_ini2
+/tests/test_ini3
+/tests/test_open
