@@ -1,0 +1,37 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: pdf-text-parser
+Upstream-Contact: <preferred name and address to reach the upstream project>
+Source: https://github.com/kuri65536/pdf_text_parser
+#
+# Please double check copyright with the licensecheck(1) command.
+
+Files:     src/Makefile
+           src/pdf_text_parser.nim
+           src/pdf_text_parser/app_extract.nim
+           src/pdf_text_parser/app_format.nim
+           src/pdf_text_parser/app_format_csv.nim
+           src/pdf_text_parser/app_parse.nim
+           src/pdf_text_parser/app_parse_datetime.nim
+           src/pdf_text_parser/options.nim
+           src/pdf_text_parser/options_macro.nim
+           src/pdf_text_parser/pdf_common.nim
+           src/pdf_text_parser/pdf_doc.nim
+           src/pdf_text_parser/pdf_get_text.nim
+           src/pdf_text_parser/pdf_page.nim
+           src/pdf_text_parser/pp_extracted.nim
+           src/pdf_text_parser/pp_format.nim
+           src/pdf_text_parser/pp_inifile.nim
+           src/pdf_text_parser/pp_parse_output.nim
+           src/pdf_text_parser/pp_parse_parse.nim
+           src/pdf_text_parser/pp_rules.nim
+           src/pdf_text_parser/pp_rulesfile.nim
+Copyright: shimoda <kuri65536@hotmail.com>
+License:   MIT License
+
+#----------------------------------------------------------------------------
+# huge files   (skipped):
+#         pdf-text-parser-0.1.tar.gz
+
+#----------------------------------------------------------------------------
+# Files marked as NO_LICENSE_TEXT_FOUND may be covered by the following
+# license/copyright files.

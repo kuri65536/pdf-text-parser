@@ -17,16 +17,53 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pp_rulesfile.nim \
 
 exe:=pdf-text-parser
+prefix:=/usr/local
 
 all:     $(exe)
-	./$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
+#	./$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
 
 build:   $(exe)
+
+test:    export PATH:=$(PATH):/usr/local/bin
+test:    $(exe)
+	testament --print pattern 'tests/*.nim'
 
 $(exe):  export PATH:=$(PATH):/usr/local/bin
 $(exe):  $(src)
 	nimble build
 	mv -f $(subst -,_,$(exe)) $(exe)
 
+install: $(exe)
+	install -D $< $(DESTDIR)$(prefix)/bin/$(notdir $<)
 
-.PHONY: all build
+
+deb:   pkg:=pdf-text-parser-0.1
+deb:   files:=src Makefile LICENSE pdf_text_parser.nimble
+deb:   $(exe)
+	rm -rf   build/$(pkg)
+	rm -f    build/$(pkg).tar.gz
+	mkdir -p build/$(pkg)/debian
+	cp -r build/debian-rules/* build/$(pkg)/debian
+	tar czvf build/$(pkg).tar.gz --transform s,^src,$(pkg)/src, $(files)
+	cp -r $(files)  build/$(pkg)
+	cd       build/$(pkg); debmake
+	cd       build/$(pkg); EDITOR=/bin/true dpkg-source --commit . 1
+	cd       build/$(pkg); debuild
+
+
+zip:   pkg:=pdf-text-parser-0.1
+zip:   pkg:=$(pkg).zip
+zip:   docs:=README.md LICENSE
+zip:
+	rm -rf tmp $(pkg)
+	mkdir tmp
+	cp $(docs) $(exe) tmp
+	(echo "[InternetShortcut]"; \
+      echo "URL=$$(git remote get-url origin)") > tmp/web-site.url
+	ldd tmp/$(exe) | grep ucrt64 | cut -d " " -f 1 | \
+	     while read l; do cp /ucrt64/bin/$$l tmp; done
+	cd tmp; zip -gur ../$(pkg) *
+	rm -rf tmp
+
+
+.PHONY: all build deb install

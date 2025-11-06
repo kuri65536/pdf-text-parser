@@ -1,0 +1,6 @@
+pdf-text-parser (0.1-1) UNRELEASED; urgency=low
+
+  * Initial release. Closes: #nnnn
+    <nnnn is the bug number of your ITP>
+
+ -- shimoda <kuri65536@hotmail.com>  Fri, 14 Mar 2025 21:22:29 +0900
