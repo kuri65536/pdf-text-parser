@@ -9,3 +9,4 @@
 /tests/test_ini2
 /tests/test_ini3
 /tests/test_open
+/tests/test_parse_string[1-3]

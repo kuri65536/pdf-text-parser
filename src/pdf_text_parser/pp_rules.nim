@@ -12,6 +12,10 @@ type
     ppk_parse,
     ppk_csv,
 
+  parse_kind* = enum
+    prk_string,
+    prk_datetime,
+
   OpBase* = ref OpBaseObj
   OpBaseObj* = object of RootObj
     kind*: operation_kind
@@ -25,6 +29,7 @@ type
   OpParseObj* = object of pp_rules.OpBase
     name*: string
     name_src*: string
+    typ*: parse_kind
     fmt_parse*: string
     fmt_store*: string
 

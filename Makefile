@@ -20,7 +20,9 @@ exe:=pdf-text-parser
 prefix:=/usr/local
 
 all:     $(exe)
-#	./$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
+
+run:     $(exe)
+	./$(exe) -r tests/rule2.ini -o test1.pdf tests/test1.pdf
 
 build:   $(exe)
 
