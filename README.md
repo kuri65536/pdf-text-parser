@@ -210,10 +210,14 @@ the format text depend on the `type` specified.
 | Type      | Description   |
 |:---------:|:--------------|
 | date-time | Parses a date/time string. |
+| string    | Parses a string. |
 
 
-**Under-construction** `date-time` parsing and formatting
-has very limitted.
+- Parsing `date-time` just passes the format parameter to
+    the nim-lang `times.parse` function.  
+    please check the
+    [nim-lang times.parse](https://nim-lang.org/docs/times.html#parsing-and-formatting-dates)
+    function manual.
 
 
 
