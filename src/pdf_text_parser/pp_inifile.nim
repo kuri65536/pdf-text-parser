@@ -124,7 +124,7 @@ proc load_ini*(strm: Stream): SectionTable =
     stat.sections[""] = @[]
     for line in strm.lines():
         let (st, opt, val) = parse_option_value(line)
-        error("load_ini:line is:", $st, ", opt:", opt)
+        debug("load_ini:line is:", $st, ", opt:", opt)
         case st:
         of section:
             stat.cur_section_name = val

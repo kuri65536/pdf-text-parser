@@ -117,10 +117,10 @@ $ ./pdf_text_parser [options] [files]
 Specifies the path to the INI file
 that defines the extraction rules.
 
-**Usage:** `--rules [file-name]` or `-r [file-name]`
+**Usage:** `--rules [file-name:section]` or `-r [file-name]`
 
 **Example:**
-`$ ./pdf_text_parser -r a_sample_rule.ini target.pdf`
+`$ ./pdf_text_parser -r a_sample_rule.ini:main target.pdf`
 
 
 -----

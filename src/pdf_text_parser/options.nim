@@ -44,7 +44,11 @@ proc parse_rules(args: seq[string]): seq[pp_rules.Rule] =
     ]##
     result = @[]
     for i in args:
-        let ret = pp_rulesfile.load(i)
+        let (path, sec) = pp_rulesfile.split_name_and_section(i)
+        if len(path.string) < 1:
+            error("option:rules: rules file does not exist: " & i)
+            continue
+        let ret = pp_rulesfile.load(path, sec)
         if len(ret) < 1: continue
         result.add(ret)
 

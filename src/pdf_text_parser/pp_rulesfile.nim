@@ -64,23 +64,34 @@ proc parse_op(tbl: SectionTable, key, val: string): seq[Rule] =
         error("rules:ignored the invalid key: ", $key, " and its value", $val)
 
 
-proc parse_rules*(tbl: SectionTable): seq[Rule] =
+proc parse_rules*(tbl: SectionTable, section: string): seq[Rule] =
     ##[
         - parse the global section.
     ]##
+    if not tbl.contains(section):
+        error("rules:load: can't find the specified section: " & section)
+        return @[]
     debug("rules:parse: " & $tbl)
-    for (key, val) in tbl[""]:
+    for (key, val) in tbl[section]:
         for rule in parse_op(tbl, key, val):
             debug("rules:parse: add new rule: " & $rule)
             result.add(rule)
 
 
-proc load*(filename: string): seq[Rule] =
-    let path = Path(filename).expandTilde()
+proc split_name_and_section*(src: string): tuple[name: Path, section: string] =
+    ##[
+    ]##
+    let tmp = src.split(":")
+    let sec = if len(tmp) > 1: tmp[1] else: ""
+    let path = Path(tmp[0]).expandTilde()
     if not os.fileExists(path.string):
-        error("rules:load: rules file does not exist: " & path.string)
-        return @[]
+        return (Path(""), "")
+    return (path, sec)
 
+
+proc load*(path: Path, section: string): seq[Rule] =
+    ##[
+    ]##
     let strm = newFileStream(path.string, fmRead)
     defer: strm.close()
     let tbl = load_ini(strm)
@@ -88,5 +99,5 @@ proc load*(filename: string): seq[Rule] =
         error("rules:load: can't load ini contents")
         return @[]
     debug("rules:parse: " & $tbl)
-    return parse_rules(tbl)
+    return parse_rules(tbl, section)
 
