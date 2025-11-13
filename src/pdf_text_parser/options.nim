@@ -4,6 +4,7 @@ License: MIT, see LICENSE
 ]##
 import logging
 import std/paths
+import strutils
 import tables
 
 import options_macro
@@ -17,6 +18,7 @@ type
     n_quit*: int
     outname*: Path
     rules*: seq[pp_rules.Rule]
+    verbosity: logging.Level
 
 
 proc usage(): void =
@@ -28,6 +30,8 @@ proc usage(): void =
     echo(pfx & "options: ")
     echo(pfx & "  --output or -o [file]   ... specify the output file name")
     echo(pfx & "  --rules  or -r [file]   ... specify the rules file")
+    echo(pfx & "  --verbosity  or -V [number] ... the debug output level " &
+                                                  "(0-6: none to all)")
 
 
 proc parse_outname(args: seq[string]): Path =
@@ -53,6 +57,46 @@ proc parse_rules(args: seq[string]): seq[pp_rules.Rule] =
         result.add(ret)
 
 
+proc parse_verbosity(args: seq[string]): logging.Level =
+    ##[ sets the verbosity as log-level.
+    ]##
+    var ret: logging.Level
+
+    proc set_level(lvl: Level): void =
+        logging.setLogFilter(lvl)
+        warn("option:verbosity: set the log-level to " & $lvl)
+        ret = lvl
+
+    for i in args:
+        let tmp = i.strip()
+        block letter:
+            let lvl = case tmp.toLower():
+                      of "all":    Level.lvlAll
+                      of "debug":  Level.lvlDebug
+                      of "info":   Level.lvlDebug
+                      of "notice": Level.lvlNotice
+                      of "warn":   Level.lvlWarn
+                      of "error":  Level.lvlError
+                      of "fatal":  Level.lvlFatal
+                      of "none":   Level.lvlNone
+                      else:        break letter
+            set_level(lvl); continue
+        block number:
+            let n = try:               parseInt(tmp)
+                    except ValueError: break number
+            let lvl = case n:
+                      of 6: Level.lvlAll
+                      of 5: Level.lvlDebug
+                      of 4: Level.lvlNotice
+                      of 3: Level.lvlWarn
+                      of 2: Level.lvlError
+                      of 1: Level.lvlFatal
+                      of 0: Level.lvlNone
+                      else: break number
+            set_level(lvl); continue
+    return ret
+
+
 func check_files(args: seq[string]): seq[Path] =
     ##[ gets the specified input files
     ]##
@@ -65,8 +109,7 @@ proc options*(args: seq[string]): Options =
     ##[ parses the command line options.
     ]##
     logging.addHandler(logging.newConsoleLogger())
-    #ogging.setLogFilter(lvlNotice)
-    logging.setLogFilter(lvlDebug)
+    logging.setLogFilter(lvlNotice)
 
     let ret = Options(n_quit: 0,
                       )
@@ -79,6 +122,7 @@ proc options*(args: seq[string]): Options =
     if len(args) < 1:
         return error(1)
     options_macro.parse_all(ret, args,
+        ('V', "--verbose", "", parse_verbosity, verbosity),
         ('r', "--rules", "", parse_rules, rules),
         ('o', "--output", "", parse_outname, outname),
     )

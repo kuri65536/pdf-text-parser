@@ -108,6 +108,7 @@ $ ./pdf_text_parser [options] [files]
 | Option    | Short | Parameter | Description |
 |:----------|:--:|:------------:|:------------|
 | `--rules` | -r | `file-name`  | **Required.** Specifies the INI file for extraction rules. [1] |
+| `--verbosity` | -V | `number` | 0-6, 0: min = none, 1: less verbosity, 6: max |
 
 [1]: #option---rules
 

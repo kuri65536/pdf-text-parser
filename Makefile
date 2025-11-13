@@ -25,7 +25,7 @@ all:     $(exe)
 run:     $(exe)
 	#/$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
 	#/$(exe) -r tests/rule3.ini:test -o test1.pdf tests/test1.pdf
-	./$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf
+	./$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf -V 4
 
 build:   $(exe)
 
