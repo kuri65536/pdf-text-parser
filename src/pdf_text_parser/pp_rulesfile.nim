@@ -11,22 +11,23 @@ import tables
 
 import pp_inifile
 import pp_rules
+import pp_parse_expand
 import pp_parse_parse
 import pp_parse_output
 
 
-proc parse_extract_as_seq(val: string): seq[Rule] =
+proc parse_extract_op(val: string): pp_rules.OpExt =
     ##[ parses the `val` as `extract` rule in a opt-val pair.
     ]##
     debug("rules:extract: parse " & val)
     let tmp = pp_rules.split_to_cells(val)
     if len(tmp) < 1:
-        error("rules:extract: ignored the invalid line: " & val); return @[]
+        error("rules:extract: ignored the invalid line: " & val); return nil
     let name = tmp[0]
     if len(tmp) < 5:
-        error("rules:extract: ignored the invalid rect: " & val); return @[]
-    proc err(msg: string): seq[Rule] =
-        error("rules:extract: error with " & msg); return @[]
+        error("rules:extract: ignored the invalid rect: " & val); return nil
+    proc err(msg: string): OpExt =
+        error("rules:extract: error with " & msg); return nil
     let x = try:   parseFloat(tmp[1])
             except ValueError: return err("x => " & tmp[1])
     let y = try:   parseFloat(tmp[2])
@@ -37,45 +38,62 @@ proc parse_extract_as_seq(val: string): seq[Rule] =
             except ValueError: return err("h => " & tmp[4])
 
     info("rules:extract: new rule " & name & "=" & $x & $y & $w & $h)
-    result = @[Rule(
-        page: -1,
-        name: name,
-        ops: @[
-            OpBase(
-            OpExt(kind: pp_rules.operation_kind.ppk_clip,
-                  x: x, y: y, w: w, h: h)
-            )
-        ]
-    )]
+    return OpExt(kind: pp_rules.operation_kind.ppk_clip,
+                 name: name,
+                 x: x, y: y, w: w, h: h)
 
 
-proc parse_op(tbl: SectionTable, key, val: string): seq[Rule] =
+proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
     ##[ parses 1 rule from a key and val pair.
     ]##
     debug("rules:extract: parse " & key)
     case key.strip().toLower():
+    of pp_parse_expand.identifier:
+        return pp_parse_expand.parse_op(val)
     of "extract":
-        return parse_extract_as_seq(val)
+        return parse_extract_op(val)
     of "parse":
-        return pp_parse_parse.parse_as_seq(val)
+        return pp_parse_parse.parse_op(val)
     of "output_csv":
-        return pp_parse_output.parse_as_seq(val)
+        return pp_parse_output.parse_op(val)
     else:
         error("rules:ignored the invalid key: ", $key, " and its value", $val)
 
 
-proc parse_rules*(tbl: SectionTable, section: string): seq[Rule] =
+proc parse_expand*(tbl: SectionTable, op: pp_rules.OpBase
+                   ): seq[pp_rules.OpBase] =
+    ##[
+    ]##
+    if not (op of OpExpand):
+        return @[op]
+    let ex = OpExpand(op)
+    for (key, val) in tbl[ex.section]:
+        let op2 = parse_op(tbl, key, val)
+        let ops_sub = parse_expand(tbl, op2)
+        error("rules:parse:expand-exp " & $len(ops_sub))
+        result.add(ops_sub)
+    error("rules:parse:expand-ret " & $len(result))
+    return result
+
+
+proc parse_rule*(tbl: SectionTable, section: string): Rule =
     ##[
         - parse the global section.
     ]##
     if not tbl.contains(section):
         error("rules:load: can't find the specified section: " & section)
-        return @[]
+        return pp_rules.Rule(name: "")
     debug("rules:parse: " & $tbl)
+    var ops: seq[pp_rules.OpBase]
     for (key, val) in tbl[section]:
-        for rule in parse_op(tbl, key, val):
-            debug("rules:parse: add new rule: " & $rule)
-            result.add(rule)
+        let op = parse_op(tbl, key, val)
+        let ops_sub = parse_expand(tbl, op)
+        debug("rules:parse: add new rule: " & $len(ops_sub))
+        ops.add(ops_sub)
+    return pp_rules.Rule(
+        page: -1, name: if len(section) < 1: "__global__" else: section,
+        ops: ops,
+    )
 
 
 proc split_name_and_section*(src: string): tuple[name: Path, section: string] =
@@ -89,7 +107,7 @@ proc split_name_and_section*(src: string): tuple[name: Path, section: string] =
     return (path, sec)
 
 
-proc load*(path: Path, section: string): seq[Rule] =
+proc load*(path: Path, section: string): Rule =
     ##[
     ]##
     let strm = newFileStream(path.string, fmRead)
@@ -97,7 +115,7 @@ proc load*(path: Path, section: string): seq[Rule] =
     let tbl = load_ini(strm)
     if len(tbl) < 1:
         error("rules:load: can't load ini contents")
-        return @[]
+        return Rule(name: "")
     debug("rules:parse: " & $tbl)
-    return parse_rules(tbl, section)
+    return parse_rule(tbl, section)
 

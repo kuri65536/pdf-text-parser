@@ -49,7 +49,7 @@ proc parse_rules(args: seq[string]): seq[pp_rules.Rule] =
             error("option:rules: rules file does not exist: " & i)
             continue
         let ret = pp_rulesfile.load(path, sec)
-        if len(ret) < 1: continue
+        if len(ret.name) < 1: continue
         result.add(ret)
 
 
@@ -65,7 +65,8 @@ proc options*(args: seq[string]): Options =
     ##[ parses the command line options.
     ]##
     logging.addHandler(logging.newConsoleLogger())
-    logging.setLogFilter(lvlNotice)
+    #ogging.setLogFilter(lvlNotice)
+    logging.setLogFilter(lvlDebug)
 
     let ret = Options(n_quit: 0,
                       )

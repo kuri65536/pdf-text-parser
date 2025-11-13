@@ -19,18 +19,17 @@ proc parse_type*(val: string): pp_rules.parse_kind =
     return pp_rules.parse_kind.prk_string
 
 
-proc parse_as_seq*(val: string): seq[Rule] =
+proc parse_op*(val: string): OpParse =
     ##[ parses the `val` as `parse` rule in a opt-val pair.
     ]##
     let tmp = pp_rules.split_to_cells(val)
     if len(tmp) < 4:
-        return @[]
+        return nil
 
-    var ret = OpParse(kind: pp_rules.operation_kind.ppk_parse,
+    return OpParse(kind: pp_rules.operation_kind.ppk_parse,
                       name: tmp[0],
                       name_src: tmp[1],
                       typ: parse_type(tmp[2]),
                       fmt_parse: tmp[3],
                       fmt_store: tmp[4])
-    return @[pp_rules.Rule(page: -1, name: "", ops: @[OpBase(ret)])]
 

@@ -8,7 +8,7 @@ import strutils
 import pp_rules
 
 
-proc parse_as_seq*(val: string): seq[Rule] =
+proc parse_op*(val: string): OpFormatCsv =
     ##[ parses the `val` as `extract` rule in a opt-val pair.
     ]##
     let tmp = block:
@@ -16,7 +16,7 @@ proc parse_as_seq*(val: string): seq[Rule] =
         for i in val.split(","): tmp2.add(i.strip())
         tmp2
 
-    var ret = OpFormatCsv(kind: pp_rules.operation_kind.ppk_csv, )
+    let ret = OpFormatCsv(kind: pp_rules.operation_kind.ppk_csv, )
     for cell in tmp:
         let parts = block:
             var parts2: seq[string]
@@ -29,5 +29,5 @@ proc parse_as_seq*(val: string): seq[Rule] =
             ret.outs.add((parts[0], ""))
             continue
         ret.outs.add((parts[0], parts[1]))
-    return @[pp_rules.Rule(page: -1, name: "", ops: @[OpBase(ret)])]
+    return ret
 

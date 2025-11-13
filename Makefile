@@ -11,6 +11,7 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pdf_page.nim \
      src/pdf_text_parser/pp_format.nim \
      src/pdf_text_parser/pp_inifile.nim \
+     src/pdf_text_parser/pp_parse_expand.nim \
      src/pdf_text_parser/pp_parse_output.nim \
      src/pdf_text_parser/pp_parse_parse.nim \
      src/pdf_text_parser/pp_rules.nim \
@@ -22,7 +23,9 @@ prefix:=/usr/local
 all:     $(exe)
 
 run:     $(exe)
-	./$(exe) -r tests/rule2.ini -o test1.pdf tests/test1.pdf
+	#/$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
+	#/$(exe) -r tests/rule3.ini:test -o test1.pdf tests/test1.pdf
+	./$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf
 
 build:   $(exe)
 

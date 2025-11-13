@@ -31,19 +31,28 @@ proc extract_text*(page: PdfPage, x, y, w, h: float): string =
     return pdf_get_text.pdf_get_text(page, x, y, w, h)
 
 
-proc extract_block*(page: PdfPage, rule: pp_rules.Rule): pp_extracted.Block =
+proc extract_block*(page: PdfPage, op: pp_rules.OpBase): pp_extracted.Block =
+    ##[
+    ]##
+    let fallback = Block(name: "")
+    if not (op of pp_rules.OpExt):
+        return fallback
+
+    let opc = OpExt(op)
+    let tmp = extract_text(page, opc.x, opc.y, opc.w, opc.h)
+    debug("extract:clip: " & opc.name & " => " & tmp)
+    return Block(name: opc.name, text: tmp)
+
+
+proc extract_blocks_in_a_rule*(page: PdfPage, rule: pp_rules.Rule
+                               ): seq[pp_extracted.Block] =
     ##[
     ]##
     for op in rule.ops:
-        case op.kind:
-        of ppk_clip:
-            let opc = OpExt(op)
-            let tmp = extract_text(page, opc.x, opc.y, opc.w, opc.h)
-            debug("extract:clip: " & rule.name & " => " & tmp)
-            return Block(name: rule.name, text: tmp)
-        else:  # ppk_invalid:
-            discard
-    return Block(name: "")  # returns as an invalid.
+        let blk = extract_block(page, op)
+        if len(blk.name) < 1:
+            continue
+        result.add(blk)
 
 
 proc extract_blocks*(rules: seq[pp_rules.Rule], fname: Path
@@ -65,7 +74,7 @@ proc extract_blocks*(rules: seq[pp_rules.Rule], fname: Path
         let (w, h) = pdf_page_size(page)
         debug("extract:load page ... " & $n & " => (" & $w & "," & $h & ")")
         for rule in rules_page:
-            let blk = extract_block(page, rule)
-            if len(blk.name) < 1: break
-            result.add(blk)
+            let blks = extract_blocks_in_a_rule(page, rule)
+            if len(blks) < 1: continue
+            result.add(blks)
 

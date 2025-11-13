@@ -11,6 +11,7 @@ type
     ppk_clip,
     ppk_parse,
     ppk_csv,
+    ppk_expand,
 
   parse_kind* = enum
     prk_string,
@@ -20,10 +21,16 @@ type
   OpBaseObj* = object of RootObj
     kind*: operation_kind
 
+  OpExpand* = ref OpExpandObj
+  OpExpandObj* = object of OpBase
+    ## the call operation
+    section*: string
+
   OpExt* = ref OpExtObj
   OpExtObj* = object of OpBase
     ## the extract operation
     x*, y*, w*, h*: float
+    name*: string
 
   OpParse* = ref OpParseObj
   OpParseObj* = object of pp_rules.OpBase
