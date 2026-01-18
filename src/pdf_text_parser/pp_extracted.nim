@@ -5,9 +5,14 @@ License: MIT, see LICENSE
 
 
 type
-  Block* = object of RootObj
+  Block* = ref BlockObj
+  BlockObj* = object of RootObj
     name*: string
     text*: string
+
+  BlockPairs* = ref BlockPairsObj
+  BlockPairsObj* = object of Block
+    pairs*: seq[tuple[key, value: string]]
 
 
 proc find*(src: openarray[pp_extracted.Block], id: string): pp_extracted.Block =

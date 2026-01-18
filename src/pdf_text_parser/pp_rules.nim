@@ -33,6 +33,14 @@ type
     fmt_parse*: string
     fmt_store*: string
 
+  PairArea* = tuple[x1, w1, x2, w2: float]
+
+  OpPairs* = ref OpPairsObj
+  OpPairsObj* = object of pp_rules.OpBase
+    name*: string
+    areas*: seq[PairArea]
+    base_diff*: float
+
   TupleCsv = tuple[name, fmt: string]
 
   OpFormatCsv* = ref OpFormatCsvObj

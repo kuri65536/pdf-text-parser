@@ -12,6 +12,7 @@ import tables
 import pp_inifile
 import pp_rules
 import pp_parse_expand
+import pp_parse_pairs
 import pp_parse_parse
 import pp_parse_output
 
@@ -51,6 +52,8 @@ proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
         return pp_parse_expand.parse_op(val)
     of "extract":
         return parse_extract_op(val)
+    of "pairs":
+        return pp_parse_pairs.parse_op(val)
     of "parse":
         return pp_parse_parse.parse_op(val)
     of "output_csv":
