@@ -43,6 +43,26 @@ proc parse_extract_op(val: string): pp_rules.OpExtract =
                      x: x, y: y, w: w, h: h)
 
 
+proc parse_get_op(val: string): pp_rules.OpGet =
+    ##[ parses the `val` as `extract` rule in a opt-val pair.
+    ]##
+    debug("rules:parse:get: " & val)
+    let tmp = pp_rules.split_to_cells(val)
+    if len(tmp) < 1:
+        error("rules:parse:get: ignored the invalid line: " & val); return nil
+    let name1 = tmp[0].strip()
+    if len(tmp) < 2:
+        error("rules:parse:get: ignored the invalid : " & val); return nil
+    let name2 = tmp[1].strip()
+    if len(tmp) < 3:
+        error("rules:parse:get: ignored the invalid : " & val); return nil
+    let name3 = tmp[2].strip()
+
+    info("rules:parse:get: " & name1 & " <= " & name2 & "['" & name3 & "']")
+    return OpGet(name_dest: name1,
+                 name_src: name2, key: name3)
+
+
 proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
     ##[ parses 1 rule from a key and val pair.
     ]##
@@ -52,6 +72,8 @@ proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
         return pp_parse_expand.parse_op(val)
     of "extract":
         return parse_extract_op(val)
+    of "get":
+        return parse_get_op(val)
     of "pairs":
         return pp_parse_pairs.parse_op(val)
     of "parse":

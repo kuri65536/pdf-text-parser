@@ -25,6 +25,12 @@ type
     x*, y*, w*, h*: float
     name*: string
 
+  OpGet* = ref OpGetObj
+  OpGetObj* = object of pp_rules.OpBase
+    name_dest*: string
+    name_src*: string
+    key*: string
+
   OpParse* = ref OpParseObj
   OpParseObj* = object of pp_rules.OpBase
     name*: string

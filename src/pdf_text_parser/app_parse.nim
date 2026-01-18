@@ -2,7 +2,10 @@
 
 License: MIT, see LICENSE
 ]##
+import logging
+
 import app_parse_datetime
+import app_parse_get
 import app_parse_string
 import pp_extracted
 import pp_rules
@@ -33,6 +36,9 @@ proc parse_rule(op: pp_rules.OpBase,
                 src: openarray[pp_extracted.Block]): pp_extracted.Block =
     ##[
     ]##
+    warn("parse:a rule ... " & $type(op))
+    if op of pp_rules.OpGet:
+        return app_parse_get.parse(OpGet(op), src)
     if op of pp_rules.OpParse:
         let tmp = parse_rule_parse(op, src)
         if len(tmp.name) > 0:
@@ -50,6 +56,7 @@ proc parse*(rules: openarray[pp_rules.Rule],
             src: openarray[pp_extracted.Block]): seq[pp_extracted.Block] =
     ##[
     ]##
+    debug("parse:enter... " & $len(src) & " with " & $len(rules))
     result = @[]
     for blk in src:
         result.add(blk)
@@ -57,6 +64,9 @@ proc parse*(rules: openarray[pp_rules.Rule],
     for rule in rules:
         for op in rule.ops:
             let blk_new = parse_rule(op, result)
-            if len(blk_new.name) > 0:
-                result.add(blk_new)
+            if isNil(blk_new):
+                continue
+            if len(blk_new.name) < 1:
+                continue
+            result.add(blk_new)
 
