@@ -14,6 +14,5 @@ proc parse_op*(val: string): OpExpand =
     ]##
     let tmp = pp_rules.split_to_cells(val)
 
-    return OpExpand(kind: pp_rules.operation_kind.ppk_expand,
-                    section: tmp[0])
+    return OpExpand(section: tmp[0])
 

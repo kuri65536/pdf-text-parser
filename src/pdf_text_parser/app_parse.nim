@@ -33,8 +33,7 @@ proc parse_rule(op: pp_rules.OpBase,
                 src: openarray[pp_extracted.Block]): pp_extracted.Block =
     ##[
     ]##
-    case op.kind:
-    of pp_rules.operation_kind.ppk_parse:
+    if op of pp_rules.OpParse:
         let tmp = parse_rule_parse(op, src)
         if len(tmp.name) > 0:
             return tmp

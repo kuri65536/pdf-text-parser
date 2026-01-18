@@ -6,28 +6,21 @@ import strutils
 
 
 type
-  operation_kind* = enum
-    ppk_invalid,
-    ppk_clip,
-    ppk_parse,
-    ppk_csv,
-    ppk_expand,
-
   parse_kind* = enum
     prk_string,
     prk_datetime,
 
   OpBase* = ref OpBaseObj
   OpBaseObj* = object of RootObj
-    kind*: operation_kind
+    discard
 
   OpExpand* = ref OpExpandObj
   OpExpandObj* = object of OpBase
     ## the call operation
     section*: string
 
-  OpExt* = ref OpExtObj
-  OpExtObj* = object of OpBase
+  OpExtract* = ref OpExtractObj
+  OpExtractObj* = object of OpBase
     ## the extract operation
     x*, y*, w*, h*: float
     name*: string

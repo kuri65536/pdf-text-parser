@@ -16,7 +16,7 @@ proc parse_op*(val: string): OpFormatCsv =
         for i in val.split(","): tmp2.add(i.strip())
         tmp2
 
-    let ret = OpFormatCsv(kind: pp_rules.operation_kind.ppk_csv, )
+    let ret = OpFormatCsv()
     for cell in tmp:
         let parts = block:
             var parts2: seq[string]

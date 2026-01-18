@@ -11,8 +11,7 @@ proc format_op(fp: File, op: pp_rules.OpBase,
                src: openarray[pp_extracted.Block]): void =
     ##[ runs the operation for input blocks.
     ]##
-    case op.kind:
-    of pp_rules.operation_kind.ppk_csv:
+    if op of pp_rules.OpFormatCsv:
         let tmp = app_format_csv.output(op, src)
         fp.write(tmp)
     else:

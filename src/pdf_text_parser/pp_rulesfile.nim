@@ -16,7 +16,7 @@ import pp_parse_parse
 import pp_parse_output
 
 
-proc parse_extract_op(val: string): pp_rules.OpExt =
+proc parse_extract_op(val: string): pp_rules.OpExtract =
     ##[ parses the `val` as `extract` rule in a opt-val pair.
     ]##
     debug("rules:extract: parse " & val)
@@ -26,7 +26,7 @@ proc parse_extract_op(val: string): pp_rules.OpExt =
     let name = tmp[0]
     if len(tmp) < 5:
         error("rules:extract: ignored the invalid rect: " & val); return nil
-    proc err(msg: string): OpExt =
+    proc err(msg: string): OpExtract =
         error("rules:extract: error with " & msg); return nil
     let x = try:   parseFloat(tmp[1])
             except ValueError: return err("x => " & tmp[1])
@@ -38,9 +38,8 @@ proc parse_extract_op(val: string): pp_rules.OpExt =
             except ValueError: return err("h => " & tmp[4])
 
     info("rules:extract: new rule " & name & "=" & $x & $y & $w & $h)
-    return OpExt(kind: pp_rules.operation_kind.ppk_clip,
-                 name: name,
-                 x: x, y: y, w: w, h: h)
+    return OpExtract(name: name,
+                     x: x, y: y, w: w, h: h)
 
 
 proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =

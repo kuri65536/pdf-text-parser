@@ -26,8 +26,7 @@ proc parse_op*(val: string): OpParse =
     if len(tmp) < 4:
         return nil
 
-    return OpParse(kind: pp_rules.operation_kind.ppk_parse,
-                      name: tmp[0],
+    return OpParse(name: tmp[0],
                       name_src: tmp[1],
                       typ: parse_type(tmp[2]),
                       fmt_parse: tmp[3],
