@@ -10,9 +10,20 @@ type
     prk_string,
     prk_datetime,
 
+  calc_kind* = enum
+    pck_add,
+    pck_sub,
+    pck_mul,
+
   OpBase* = ref OpBaseObj
   OpBaseObj* = object of RootObj
     discard
+
+  OpCalc* = ref OpCalcObj
+  OpCalcObj* = object of OpBase
+    name_dest*: string
+    calc*: calc_kind
+    exprs*: seq[OpBase]
 
   OpExpand* = ref OpExpandObj
   OpExpandObj* = object of OpBase

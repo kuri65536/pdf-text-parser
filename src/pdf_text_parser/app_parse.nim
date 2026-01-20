@@ -4,6 +4,7 @@ License: MIT, see LICENSE
 ]##
 import logging
 
+import app_parse_calc
 import app_parse_datetime
 import app_parse_get
 import app_parse_string
@@ -37,6 +38,8 @@ proc parse_rule(op: pp_rules.OpBase,
     ##[
     ]##
     warn("parse:a rule ... " & $type(op))
+    if op of pp_rules.OpCalc:
+        return app_parse_calc.parse(OpCalc(op), src)
     if op of pp_rules.OpGet:
         return app_parse_get.parse(OpGet(op), src)
     if op of pp_rules.OpParse:

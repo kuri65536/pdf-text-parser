@@ -13,22 +13,12 @@ proc parse*(op: pp_rules.OpGet,
     ##[
     ]##
     warn("parse:get:enter for " & op.name_dest)
-    for blk in src:
-        if blk.name != op.name_src:
-            continue
-        if not(blk of BlockPairs):
-            error("parse:get:specified is not a pairs block ... " & blk.name)
-            continue
-        let tmp = BlockPairs(blk)
-        for (k, v) in tmp.pairs:
-            if k != op.key:
-                continue
-            warn("parse:get:got new block ... " & op.name_dest & " as " & v)
-            return pp_extracted.Block(
-                name: op.name_dest, text: v,
-            )
-        error("parse:get:the table does not have key ... " & op.key)
-        break
-    error("parse:get:can't find the table ... " & op.name_src)
-    return nil
+    let ret = pp_extracted.find_with_key(src, op.name_src, op.key)
+    if isNil(ret):
+        error("parse:get:specified is not found ... " & op.name_src &
+              ", key:" & op.key)
+        return nil
+    warn("parse:get:got new block ... " & op.name_dest & " as " & ret.text)
+    ret.name = op.name_dest
+    return ret
 

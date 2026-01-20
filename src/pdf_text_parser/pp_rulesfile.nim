@@ -11,6 +11,7 @@ import tables
 
 import pp_inifile
 import pp_rules
+import pp_parse_calc
 import pp_parse_expand
 import pp_parse_pairs
 import pp_parse_parse
@@ -70,6 +71,8 @@ proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
     case key.strip().toLower():
     of pp_parse_expand.identifier:
         return pp_parse_expand.parse_op(val)
+    of "calc":
+        return pp_parse_calc.parse_op(val)
     of "extract":
         return parse_extract_op(val)
     of "get":
