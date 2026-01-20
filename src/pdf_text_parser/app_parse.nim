@@ -23,9 +23,11 @@ proc parse_rule_parse(op: pp_rules.OpBase,
     let tmp2 = case opprs.typ:
         of pp_rules.parse_kind.prk_string:
             let tmp = app_parse_string.parse(opprs.fmt_parse, blk.text)
+            warn("parse:parse:string:got " & blk.text & " => " & tmp)
             app_parse_string.format(opprs.fmt_store, tmp)
         of pp_rules.parse_kind.prk_datetime:
             let tmp = app_parse_datetime.parse(opprs.fmt_parse, blk.text)
+            warn("parse:parse:datetime:got " & blk.text & " => " & $tmp)
             app_parse_datetime.format(opprs.fmt_store, tmp)
     result = pp_extracted.Block(
         name: opprs.name,

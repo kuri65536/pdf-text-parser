@@ -25,12 +25,16 @@ proc usage(): void =
     const project_name = "pdf-text-parser"
     const prg = project_name
     const pfx = "  "
+    proc lv1(src: string): void =
+        echo(pfx & src)
+    proc lv2(src: string): void =
+        echo(pfx & pfx & src)
     echo(prg & ": extract the TOC and modify pdf outlines")
-    echo(pfx & "usage: " & prg & " [options] [file1] [file2] ...")
-    echo(pfx & "options: ")
-    echo(pfx & "  --output or -o [file]   ... specify the output file name")
-    echo(pfx & "  --rules  or -r [file]   ... specify the rules file")
-    echo(pfx & "  --verbosity  or -V [number] ... the debug output level " &
+    lv1("usage: " & prg & " [options] [file1] [file2] ...")
+    lv1("options: ")
+    lv2("--output or -o [file]   ... specify the output file name")
+    lv2("--rules  or -r [file]   ... specify the rules file")
+    lv2("--verbosity  or -V [number] ... the debug output level " &
                                                   "(0-6: none to all)")
 
 

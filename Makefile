@@ -1,8 +1,14 @@
 
 src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/app_extract.nim \
+     src/pdf_text_parser/app_extract_pairs.nim \
+     src/pdf_text_parser/app_format.nim \
+     src/pdf_text_parser/app_format_csv.nim \
      src/pdf_text_parser/app_parse.nim \
+     src/pdf_text_parser/app_parse_calc.nim \
      src/pdf_text_parser/app_parse_datetime.nim \
+     src/pdf_text_parser/app_parse_get.nim \
+     src/pdf_text_parser/app_parse_string.nim \
      src/pdf_text_parser/options.nim \
      src/pdf_text_parser/options_macro.nim \
      src/pdf_text_parser/pdf_common.nim \
@@ -13,6 +19,7 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pp_inifile.nim \
      src/pdf_text_parser/pp_parse_expand.nim \
      src/pdf_text_parser/pp_parse_output.nim \
+     src/pdf_text_parser/pp_parse_pairs.nim \
      src/pdf_text_parser/pp_parse_parse.nim \
      src/pdf_text_parser/pp_rules.nim \
      src/pdf_text_parser/pp_rulesfile.nim \
@@ -25,7 +32,8 @@ all:     $(exe)
 run:     $(exe)
 	#/$(exe) -r tests/rule1.ini -o test1.pdf tests/test1.pdf
 	#/$(exe) -r tests/rule3.ini:test -o test1.pdf tests/test1.pdf
-	./$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf -V 4
+	#/$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf -V 4
+	./$(exe) $(args)
 
 build:   $(exe)
 

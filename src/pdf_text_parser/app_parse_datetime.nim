@@ -10,6 +10,7 @@ import times
 proc parse*(fmt, src: string): times.DateTime =
     ##[
     ]##
+    debug("parse:datetime: " & src & " as " & fmt)
     let fmt = fmt.strip()
     if len(fmt) > 30:
         error("parse:datetime: can't pass the format over 30 characters:" & fmt)
