@@ -3,6 +3,7 @@
 License: MIT, see LICENSE
 ]##
 import logging
+import re
 import strutils
 
 
@@ -11,16 +12,16 @@ proc is_replace_format(fmt: string): tuple[f, g: bool, pat, rep: string] =
     ]##
     const fallback1 = (false, false, "", "")
     let pfx = fmt[0]
-    debug("parse:check:1: " & fmt & " => " & $pfx)
+    debug("parse:string:is_replace_format: " & fmt & ", prefix is " & $pfx)
     if not ['/', '#', '%'].contains(pfx):
         return fallback1
-    debug("parse:check:2: " & fmt & " => " & $pfx)
     let n_rep = if fmt.endsWith(pfx):         2
                 elif fmt.endsWith(pfx & "g"): 3
                 else: 0
+    debug("parse:string:is_replace_format: suffix is type #" & $n_rep)
     if n_rep == 0:
         return fallback1
-    debug("parse:check:3: " & fmt[1 ..^ n_rep] & " => " & $n_rep)
+    debug("parse:string:is_replace_format: input is " & fmt[1 ..^ n_rep])
     var (pat, rep, f_rep, f_esc) = ("", "", false, false)
     for n, ch in fmt[1 ..^ n_rep]:
         if f_esc and ch == pfx:
@@ -44,17 +45,29 @@ proc is_replace_format(fmt: string): tuple[f, g: bool, pat, rep: string] =
                 f_esc = true
             else:
                 rep &= ch
-    debug("parse:check:6: " & pat & ", " & rep)
+    debug("parse:string:is_replace_format: result '" & pat & "'-'" & rep & "'")
     return (true, n_rep == 3, pat, rep)
 
 
 proc parse_replace(src: string, pat, rep: string, f_rep: bool): string =
     ##[ applies the replacement to string.
     ]##
-    if f_rep:
-        return strutils.replace(src, pat, rep)
-    let tmp = src.split(pat)
-    return tmp[0] & rep & tmp[1 ..^ 1].join(pat)
+    let rex = re.re(pat)
+    let tmp = block:
+        if f_rep:
+            re.replace(src, rex, rep)
+        else:
+            let tmp2 = re.findAll(src, rex)
+            if len(tmp2) < 1:
+                src
+            else:
+                let tmp3 = strutils.split(src, tmp2[0])
+                if len(tmp3) < 2:
+                    src
+                else:
+                    tmp3[0] & rep & strutils.join(tmp3[1 ..^ 1], tmp2[0])
+    debug("parse:string:replace '" & pat & "' with '" & rep & "'->" & tmp)
+    return tmp
 
 
 proc parse_single(tmp: seq[string], src: string): string =
