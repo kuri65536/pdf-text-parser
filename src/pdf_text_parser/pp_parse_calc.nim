@@ -55,17 +55,14 @@ proc parse_calc_expr*(val: string): pp_rules.OpBase =
 proc parse_calc_op*(val: string): pp_rules.calc_kind =
     ##[ parse the operator string in the calc rule
     ]##
-    return case val.toLower().strip():
-           of "+":        pp_rules.calc_kind.add
-           of "add":      pp_rules.calc_kind.add
-           of "-":        pp_rules.calc_kind.sub
-           of "sub":      pp_rules.calc_kind.sub
-           of "subtract": pp_rules.calc_kind.sub
-           of "*":        pp_rules.calc_kind.mul
-           of "mul":      pp_rules.calc_kind.mul
-           of "multiply": pp_rules.calc_kind.mul
-           else:
-                raise newException(ValueError, "invalid calc string: " & val)
+    let tmp = val.toLower().strip()
+    if ["+", "add"].contains(tmp):
+        return pp_rules.calc_kind.pck_add
+    if ["-", "sub", "subtract"].contains(tmp):
+        return pp_rules.calc_kind.pck_sub
+    if ["*", "mul", "multiply"].contains(tmp):
+        return pp_rules.calc_kind.pck_mul
+    raise newException(ValueError, "invalid calc string: " & val)
 
 
 proc parse_op*(val: string): OpCalc =
