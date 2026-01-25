@@ -8,6 +8,7 @@ import math
 import logging
 import strutils
 
+import pp_eval_calc_concat
 import pp_extracted
 import pp_rules
 
@@ -34,6 +35,9 @@ proc parse*(op: pp_rules.OpCalc,
               of calc_kind.pck_add: 0.0
               of calc_kind.pck_sub: 0.0
               of calc_kind.pck_mul: 1.0
+              of calc_kind.pck_concat:
+                let tmp = pp_eval_calc_concat.eval(src, op.exprs)
+                return pp_extracted.Block(name: op.name_dest, text: tmp)
     for i in op.exprs:
         let (n, k, blk) = block:
             if i of OpParse:
@@ -56,6 +60,7 @@ proc parse*(op: pp_rules.OpCalc,
         of calc_kind.pck_add: ret += v
         of calc_kind.pck_sub: ret -= v
         of calc_kind.pck_mul: ret *= v
+        else:                 discard
     return pp_extracted.Block(
         name: op.name_dest, text: $ret
     )
