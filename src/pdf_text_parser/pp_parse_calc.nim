@@ -64,6 +64,8 @@ proc parse_calc_op*(val: string): pp_rules.calc_kind =
         return pp_rules.calc_kind.pck_mul
     if ["&", "concat"].contains(tmp):
         return pp_rules.calc_kind.pck_concat
+    if ["?", "if", "ternary"].contains(tmp):
+        return pp_rules.calc_kind.pck_ternary
     raise newException(ValueError, "invalid calc string: " & val)
 
 

@@ -15,6 +15,7 @@ type
     pck_sub,
     pck_mul,
     pck_concat,
+    pck_ternary,
 
   OpBase* = ref OpBaseObj
   OpBaseObj* = object of RootObj
