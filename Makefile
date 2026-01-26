@@ -38,8 +38,9 @@ run:     $(exe)
 build:   $(exe)
 
 test:    export PATH:=$(PATH):/usr/local/bin
+test:    pat:=$(if $(args),$(args),'tests/*.nim')
 test:    $(exe)
-	testament --print pattern 'tests/*.nim'
+	testament --print pattern $(pat)
 
 $(exe):  export PATH:=$(PATH):/usr/local/bin
 $(exe):  $(src)

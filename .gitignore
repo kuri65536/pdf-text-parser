@@ -5,6 +5,10 @@
 /pdf-text-parser*.zip
 /testresults
 /tests/test*.pdf
+/tests/test_calc1
+/tests/test_calc2
+/tests/test_calc2_2
+/tests/test_calc2_3
 /tests/test_ini
 /tests/test_ini2
 /tests/test_ini3
