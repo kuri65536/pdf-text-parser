@@ -140,12 +140,18 @@ or [test_ini3](tests/test_ini3.nim)
 #### Example Rule File
 
 ```ini
+expand = group1
+
+[group1]
 ; Rules in the global (top-level) section
 extract = abc, 100, 100, 200, 200
 extract = def, 100, 110, 200, 200
 extract = ghi, 100, 120, 200, 200
 
 format_csv = abc, def, ghi
+
+[group2]
+pairs = tbl0, 80:50:200:20, 280:50:400:20
 ```
 
 
@@ -165,6 +171,47 @@ this rule file will generate the following CSV output:
 
 ### Rule Definitions
 
+#### The Rule: 'expand'
+
+This rule will expand the rules in the group which
+was specified in this rule.
+
+The belows is example:
+
+```text
+rule1 = ...
+expand = name2
+rule3 = ...
+
+[name2]
+rule2_1 = ...
+rule2_1 = ...
+...
+```
+
+The above rules are equivalent to rules::
+
+```text
+rule1 = ...
+rule2_1 = ...
+rule2_1 = ...
+...
+rule3 = ...
+```
+
+
+The usage: `expand = [name]`
+
+
+**name**
+
+Then `name` parameter specifies the `ini-file` group to be
+expanded at this line in the current rules group.
+
+
+-----
+
+
 #### The Rule: 'extract'
 
 This rule extracts text from a specific region
@@ -182,6 +229,56 @@ extract = [variable_name], [x1], [y1], [x2], [y2]
 | 3        | `y1`  | the **top**  coordinate of the area |
 | 4        | `x2`  | the **right** coordinate of the area |
 | 5        | `y2`  | the **bottom** coordinate of the area |
+
+
+-----
+
+
+#### The Rule: 'pairs'
+
+```text
+pairs = [variable_name], [bd:num], [x1:w1:x2:w2], ...
+```
+
+| Position | Value | Description   |
+|:--------:|:-----:|---------------|
+| 1 | `variable_name` | The name of the extracted text |
+| 2 or later | `x1:w1:x2:w2`  | see the below parameter |
+| 2 or later | `bd`           | allow the y difference in same line |
+
+
+**x1:w1:x2:w2** parameter
+
+- `x1:w1` is the x position and range of the **key**
+- `x2:w2` is the x position and range of the **value**
+
+At the first, the bounding boxes in the page will be grouped by
+the same y2 posision with `bd` parameter.
+
+Next, the bounding box in the range of `x1` and `x1 + w1` and
+the bounding box in the range of `x2` and `x2 + w2` in the
+same group will be registered as the key-value pair to the result.
+
+The result can be obtained by specifying the `key` value.
+The `key` value is the PDF content and the `value` is the
+PDF content on the same line of `key` value.
+
+
+**bd** parameter
+
+`bd` parameter is the number of difference to group the bounding boxes
+as the same line.
+
+For example, the below bounding boxes will be treated as
+same line if `bd` parameter is 5,
+but these are in different line with the `bd` is 2.
+
+| box    | y2  | bd=5 | bd=2 |
+|--------|-----|------|------|
+| bbox1  | 100 | o    | o    |
+| bbox2  | 101 |^     |^     |
+| bbox3  | 104 |^     | x    |
+
 
 
 -----
@@ -226,6 +323,65 @@ the format text depend on the `type` specified.
 ---
 
 
+#### The Rule: 'get'
+
+This rule specifies the `get` operation for the extracted text
+from the `pairs` rule.
+
+```text
+get = [new_name], [source_name], [key_name]
+```
+
+| Position | Value   | Description   |
+|:--------:|:-------:|:-------------:|
+| 1  | `new_name`    | The name of the new parsed text |
+| 2  | `source_name` | The variable name from `pairs` to parse |
+| 3  | `key`         | the key string in the parsed pairs |
+
+
+
+---
+
+
+#### The Rule: 'calc'
+
+This rule specifies the calculate operation for the extracted text.
+
+```text
+calc = [new_name], [operator], [term1], [term2], [term3] ...
+
+calc = name2, add, name1, name4, name5
+calc = name3, &, name1, name4
+```
+
+| Position | Value   | Description   |
+|:--------:|:-------:|:-------------:|
+| 1  | `new_name`    | The name of the new calculated text |
+| 2  | `operator`    | The calculation type |
+| 3  | `term1`       | the source variable |
+| 4  | `term2`       | the source variable |
+| 5  | `term3`       | the source variable (optional) |
+
+the calculation type on the `operator` specified.
+
+| Type      | Description   |
+|:---------:|:--------------|
+| +         | add the terms as number, the result will be sum of terms |
+| add       |^ |
+| -         | subtract the terms as number |
+| sub       |^ |
+| *         | multiply the terms as number |
+| mul       |^ |
+| &         | concatenate the terms as string |
+| concat    |^ |
+
+Please see [tests/test_calc1.nim] or `test_calc*.nim` for
+the oprators and expected results.
+
+
+---
+
+
 Roadmap (Under Construction)
 -----------------------------------------
 
@@ -235,11 +391,11 @@ The following features are planned:
 
 - XML output format.
 - JSON output format.
-- Grouping rules into INI sections (e.g., `[Page1]`, `[PageHeader]`).
-- The pair extraction:
-    extracts the attribute and the value in a same line
-    (e.g. table data)
-- Expanded date-time parsing (full support for nim-lang `times` module).
+- true poppler-API access to get bounding box in PDF.
+- cache the bounding box contents in PDFDoc
+- refactor the rule structure
+- add the page parameters to the pairs
+- add the page parameters to the extract
 
 
 
