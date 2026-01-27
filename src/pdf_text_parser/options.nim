@@ -77,7 +77,7 @@ proc parse_verbosity(args: seq[string]): logging.Level =
             let lvl = case tmp.toLower():
                       of "all":    Level.lvlAll
                       of "debug":  Level.lvlDebug
-                      of "info":   Level.lvlDebug
+                      of "info":   Level.lvlInfo
                       of "notice": Level.lvlNotice
                       of "warn":   Level.lvlWarn
                       of "error":  Level.lvlError
@@ -87,16 +87,23 @@ proc parse_verbosity(args: seq[string]): logging.Level =
             set_level(lvl); continue
         block number:
             let n = try:               parseInt(tmp)
-                    except ValueError: break number
+                    except ValueError:
+                        set_level(Level.lvlError)
+                        error("invalid option for verbosity:" & tmp)
+                        break number
             let lvl = case n:
-                      of 6: Level.lvlAll
-                      of 5: Level.lvlDebug
+                      of 7: Level.lvlAll
+                      of 6: Level.lvlDebug
+                      of 5: Level.lvlInfo
                       of 4: Level.lvlNotice
                       of 3: Level.lvlWarn
                       of 2: Level.lvlError
                       of 1: Level.lvlFatal
                       of 0: Level.lvlNone
-                      else: break number
+                      else:
+                        set_level(Level.lvlError)
+                        error("invalid option for verbosity:" & tmp)
+                        break number
             set_level(lvl); continue
     return ret
 
