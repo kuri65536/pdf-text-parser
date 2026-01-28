@@ -56,7 +56,8 @@ Prerequisites
 | Software     | Required Version |
 |:------------:|:---------:|
 | nim          | >= 2.0.2  |
-| poppler-glib | poppler-glib-dev 22.12.0-2+deb12u1 >= |
+| poppler-glib  | libpoppler-glib-dev >= 22.12.0-2+deb12u1 |
+| poppler-utils | poppler-utils       >= 22.12.0-2+deb12u1 |
 
 
 ---
@@ -114,7 +115,7 @@ $ ./pdf_text_parser [options] [files]
 
 
 
-#### option: --rules
+#### Option: --rules
 Specifies the path to the INI file
 that defines the extraction rules.
 
@@ -127,9 +128,22 @@ that defines the extraction rules.
 -----
 
 
+#### Option: --verbosity
+Specifies the verbosity level for debug messages by 0 to 7.
+Higher values increase verbosity; 0 disables outputs.
+
+**Usage:** `--verbosity [0-7]` or `-V [0-7]`
+
+**Example:**
+`$ ./pdf_text_parser -V 7 -r a_sample_rule.ini:main target.pdf`
+
+
+-----
+
+
 ### The Extract Rules File
-The extract rules file is the `ini file` format and
-procceed a line by lines.
+The extract rules file uses the `INI file` format and
+is processed line by line.
 
 see the examples in the `tests/` directory:
 [test_ini](tests/test_ini.nim),
@@ -176,7 +190,7 @@ this rule file will generate the following CSV output:
 This rule will expand the rules in the group which
 was specified in this rule.
 
-The belows is example:
+The following is an example:
 
 ```text
 rule1 = ...
@@ -205,7 +219,7 @@ The usage: `expand = [name]`
 
 **name**
 
-Then `name` parameter specifies the `ini-file` group to be
+The `name` parameter specifies the `ini-file` group to be
 expanded at this line in the current rules group.
 
 
@@ -243,42 +257,49 @@ pairs = [variable_name], [bd:num], [x1:w1:x2:w2], ...
 | Position | Value | Description   |
 |:--------:|:-----:|---------------|
 | 1 | `variable_name` | The name of the extracted text |
-| 2 or later | `x1:w1:x2:w2`  | see the below parameter |
-| 2 or later | `bd`           | allow the y difference in same line |
+| 2 or later | `x1:w1:x2:w2`  | See parameter details below  |
+| 2 or later | `bd`           | The y tolerance for grouping |
+
+
+**Logic**
+
+1. First, bounding boxes on the page are grouped by
+    their y2 position (bottom coordinate),
+    using the `bd` parameter as a tolerance.
+
+2. Next, within each group (line), the tool looks for
+    a bounding box in the key range (x1 to x1 + w1) and
+    a bounding box in the value range (x2 to x2 + w2).
+
+3. If both are found, they are registered as a key-value pair.
+
+The result can be retrieved using the `get` rule
+by specifying the `key` content.
 
 
 **x1:w1:x2:w2** parameter
 
-- `x1:w1` is the x position and range of the **key**
-- `x2:w2` is the x position and range of the **value**
+- `x1:w1` ... The x position and width of the **key**
+- `x2:w2` ... The x position and width of the **value**
 
-At the first, the bounding boxes in the page will be grouped by
-the same y2 posision with `bd` parameter.
 
-Next, the bounding box in the range of `x1` and `x1 + w1` and
-the bounding box in the range of `x2` and `x2 + w2` in the
-same group will be registered as the key-value pair to the result.
+**bd parameter (bottom coordinate difference)**
+
+`bd` parameter specifies the tolerance (in PDF unit)
+for grouping bounding boxes as being on the "same line".
+
+For example, if `bd` parameter is 5, boxes with slightly
+different Y2 coordinates will be treated as the same line.
+If `bd` is 2, the checking is stricter.
+
+| box    | y2  | bd=5        | bd=2 |
+|--------|-----|-------------|------|
+| bbox1  | 100 | o           | o    |
+| bbox2  | 101 | (same line) | (same line) |
+| bbox3  | 104 | (same line) | (different line) |
+
 
 The result can be obtained by specifying the `key` value.
-The `key` value is the PDF content and the `value` is the
-PDF content on the same line of `key` value.
-
-
-**bd** parameter
-
-`bd` parameter is the number of difference to group the bounding boxes
-as the same line.
-
-For example, the below bounding boxes will be treated as
-same line if `bd` parameter is 5,
-but these are in different line with the `bd` is 2.
-
-| box    | y2  | bd=5 | bd=2 |
-|--------|-----|------|------|
-| bbox1  | 100 | o    | o    |
-| bbox2  | 101 |^     |^     |
-| bbox3  | 104 |^     | x    |
-
 
 
 -----
@@ -303,7 +324,7 @@ parse = name3, name1, date-time, yyyy/mm/dd, mm
 | 4  | `format1`     | the *input* format to parse   |
 | 5  | `format2`     | the *output* format to output |
 
-the format text depend on the `type` specified.
+the format text depends on the `type` specified.
 
 | Type      | Description   |
 |:---------:|:--------------|
@@ -366,17 +387,17 @@ the calculation type on the `operator` specified.
 
 | Type      | Description   |
 |:---------:|:--------------|
-| +         | add the terms as number, the result will be sum of terms |
+| +         | add the terms as numbers, the result will be sum of terms |
 | add       |^ |
-| -         | subtract the terms as number |
+| -         | subtract the terms as numbers |
 | sub       |^ |
-| *         | multiply the terms as number |
+| *         | multiply the terms as numbers |
 | mul       |^ |
 | &         | concatenate the terms as string |
 | concat    |^ |
 
 Please see [tests/test_calc1.nim] or `test_calc*.nim` for
-the oprators and expected results.
+the operators and expected results.
 
 
 ---
@@ -391,11 +412,11 @@ The following features are planned:
 
 - XML output format.
 - JSON output format.
-- true poppler-API access to get bounding box in PDF.
-- cache the bounding box contents in PDFDoc
-- refactor the rule structure
-- add the page parameters to the pairs
-- add the page parameters to the extract
+- True poppler-API access to get bounding box in PDF.
+- Cache the bounding box contents in PDFDoc
+- Refactor the rule structure
+- Add the page parameters to the pairs
+- Add the page parameters to the extract
 
 
 
@@ -412,8 +433,8 @@ MIT (see `LICENSE` file)
 
 Information
 -----------------------------------------
-If you have attract or thank to this project,
-Welcome to help or support by your donations.
+If you find this project useful,
+Donations are welcome to support the development of this project.
 
 
 [![img-bitcoin]][lnk-bitcoin]
