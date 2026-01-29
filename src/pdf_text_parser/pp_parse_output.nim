@@ -8,6 +8,10 @@ import strutils
 import pp_rules
 
 
+const
+    identifier* = "output_csv"
+
+
 proc parse_op*(val: string): OpOutputCsv =
     ##[ parses the `val` as `extract` rule in a opt-val pair.
     ]##

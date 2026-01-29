@@ -72,17 +72,17 @@ proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
     case key.strip().toLower():
     of pp_parse_expand.identifier:
         return pp_parse_expand.parse_op(val)
-    of "calc":
+    of pp_parse_calc.identifier:
         return pp_parse_calc.parse_op(val)
     of "extract":
         return parse_extract_op(val)
     of "get":
         return parse_get_op(val)
-    of "pairs":
+    of pp_parse_pairs.identifier:
         return pp_parse_pairs.parse_op(val)
-    of "parse":
+    of pp_parse_parse.identifier:
         return pp_parse_parse.parse_op(val)
-    of "output_csv":
+    of pp_parse_output.identifier:
         return pp_parse_output.parse_op(val)
     of pp_parse_output_xml.identifier:
         return pp_parse_output_xml.parse_op(val)

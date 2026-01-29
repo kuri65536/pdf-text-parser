@@ -10,6 +10,10 @@ import strutils
 import pp_rules
 
 
+const
+    identifier* = "calc"
+
+
 proc parse_calc_expr_tableget*(val: string): pp_rules.OpGet =
     ##[ parse an input string as the `pairs` rule name and its key value
 

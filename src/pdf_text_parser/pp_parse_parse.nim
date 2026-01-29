@@ -8,6 +8,10 @@ import strutils
 import pp_rules
 
 
+const
+    identifier* = "parse"
+
+
 proc parse_type*(val: string): pp_rules.parse_kind =
     ##[ parse an input string to `parse_kind`
     ]##

@@ -9,6 +9,10 @@ import strutils
 import pp_rules
 
 
+const
+    identifier* = "pairs"
+
+
 proc parse_base_diff*(val: string): float =
     ##[ parse an input string as base line difference value.
     ]##
