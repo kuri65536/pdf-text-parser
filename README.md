@@ -410,13 +410,15 @@ Roadmap (Under Construction)
 
 The following features are planned:
 
-- XML output format.
 - JSON output format.
 - True poppler-API access to get bounding box in PDF.
 - Cache the bounding box contents in PDFDoc
 - Refactor the rule structure
 - Add the page parameters to the pairs
 - Add the page parameters to the extract
+- Concat text within the specified range
+- Extract the table contents
+- Output sub items from the table for XML and JSON
 
 
 
