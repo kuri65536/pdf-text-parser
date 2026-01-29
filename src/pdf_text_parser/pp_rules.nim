@@ -44,6 +44,16 @@ type
     name_src*: string
     key*: string
 
+  OpOutputCsv* = ref OpOutputCsvObj
+  OpOutputCsvObj* = object of pp_rules.OpBase
+    outs*: seq[TupleCsv]
+
+  OpOutputXml* = ref OpOutputXmlObj
+  OpOutputXmlObj* = object of pp_rules.OpBase
+    f_space*: bool
+    name*: string
+    outs*: seq[TupleXml]
+
   OpParse* = ref OpParseObj
   OpParseObj* = object of pp_rules.OpBase
     name*: string
@@ -62,9 +72,7 @@ type
 
   TupleCsv = tuple[name, fmt: string]
 
-  OpFormatCsv* = ref OpFormatCsvObj
-  OpFormatCsvObj* = object of pp_rules.OpBase
-    outs*: seq[TupleCsv]
+  TupleXml = tuple[name, tag, fmt: string]
 
   Rule* = object of RootObj
     page*: int

@@ -2,8 +2,9 @@
 
 License: MIT, see LICENSE
 ]##
-import app_format_csv
 import pp_extracted
+import pp_output_csv
+import pp_output_xml
 import pp_rules
 
 
@@ -11,8 +12,11 @@ proc format_op(fp: File, op: pp_rules.OpBase,
                src: openarray[pp_extracted.Block]): void =
     ##[ runs the operation for input blocks.
     ]##
-    if op of pp_rules.OpFormatCsv:
-        let tmp = app_format_csv.output(op, src)
+    if op of pp_rules.OpOutputCsv:
+        let tmp = pp_output_csv.output(op, src)
+        fp.write(tmp)
+    elif op of pp_rules.OpOutputXml:
+        let tmp = pp_output_xml.output(op, src)
         fp.write(tmp)
     else:
         discard
