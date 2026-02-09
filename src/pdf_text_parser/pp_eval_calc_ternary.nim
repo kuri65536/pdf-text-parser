@@ -26,6 +26,7 @@ proc eval_calc_cond_split(expr: string): tuple[op, l, r: string] =
     let tmp = strutils.split(expr, opr)
     let tmp0 = tmp[0].strip()
     let tmp1 = strutils.join(tmp[1 ..^ 1], opr).strip()
+    debug("eval:calc:cond: op=>'" & opr & "' " & tmp0 & " vs " & tmp1)
     return (opr, tmp0, tmp1)
 
 
@@ -74,6 +75,9 @@ proc eval_calc_cond*(src: openarray[pp_extracted.Block],
     ##[ evaluate the condition expression
     ]##
     let (op, ls, rs) = eval_calc_cond_split(OpParse(cond_expr).name_src)
+    if op == "<>" and rs == "\"\"":
+        let blk = pp_extracted.find(src, ls)
+        return len(blk.name) > 0
     let (l, r) = (pp_eval_calc.eval_calc_str(src, ls),
                   pp_eval_calc.eval_calc_str(src, rs))
     block:
