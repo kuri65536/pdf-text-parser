@@ -33,6 +33,9 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pp_rules.nim \
      src/pdf_text_parser/pp_rulesfile.nim \
 
+src_tests:=\
+           $(wildcard tests/*.nim) \
+
 exe:=pdf-text-parser
 prefix:=/usr/local
 
@@ -51,7 +54,7 @@ build:   $(exe)
 
 test:    export PATH:=$(PATH):/usr/local/bin
 test:    pat:=$(if $(args),$(args),'tests/*.nim')
-test:    $(exe)
+test:    $(exe) $(src_tests)
 	testament --print pattern $(pat)
 
 $(exe):  export PATH:=$(PATH):/usr/local/bin
