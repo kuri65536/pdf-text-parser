@@ -1,37 +1,6 @@
 
 src:=src/pdf_text_parser.nim \
-     src/pdf_text_parser/app_extract.nim \
-     src/pdf_text_parser/app_extract_pairs.nim \
-     src/pdf_text_parser/app_format.nim \
-     src/pdf_text_parser/app_parse.nim \
-     src/pdf_text_parser/app_parse_calc.nim \
-     src/pdf_text_parser/app_parse_datetime.nim \
-     src/pdf_text_parser/app_parse_get.nim \
-     src/pdf_text_parser/app_parse_string.nim \
-     src/pdf_text_parser/options.nim \
-     src/pdf_text_parser/options_macro.nim \
-     src/pdf_text_parser/pdf_common.nim \
-     src/pdf_text_parser/pdf_doc.nim \
-     src/pdf_text_parser/pdf_get_text.nim \
-     src/pdf_text_parser/pdf_page.nim \
-     src/pdf_text_parser/pp_eval_calc.nim \
-     src/pdf_text_parser/pp_eval_calc_concat.nim \
-     src/pdf_text_parser/pp_eval_calc_ternary.nim \
-     src/pdf_text_parser/pp_extracted.nim \
-     src/pdf_text_parser/pp_format.nim \
-     src/pdf_text_parser/pp_inifile.nim \
-     src/pdf_text_parser/pp_output_csv.nim \
-     src/pdf_text_parser/pp_output_json.nim \
-     src/pdf_text_parser/pp_output_xml.nim \
-     src/pdf_text_parser/pp_parse_calc.nim \
-     src/pdf_text_parser/pp_parse_expand.nim \
-     src/pdf_text_parser/pp_parse_output.nim \
-     src/pdf_text_parser/pp_parse_output_json.nim \
-     src/pdf_text_parser/pp_parse_output_xml.nim \
-     src/pdf_text_parser/pp_parse_pairs.nim \
-     src/pdf_text_parser/pp_parse_parse.nim \
-     src/pdf_text_parser/pp_rules.nim \
-     src/pdf_text_parser/pp_rulesfile.nim \
+     $(wildcard src/pdf_text_parser/*.nim) \
 
 src_tests:=\
            $(wildcard tests/*.nim) \

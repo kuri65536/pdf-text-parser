@@ -14,8 +14,8 @@ proc eval_calc_get*(src: openarray[pp_extracted.Block], exp: pp_rules.OpBase
                     ): tuple[name, key: string, blk: pp_extracted.Block] =
     ##[ get the expression `exp` from the `src`
     ]##
-    if exp of OpParse:
-        let name = OpParse(exp).name_src
+    if exp of OpConvert:
+        let name = OpConvert(exp).name_src
         return (name, "", pp_extracted.find(src, name))
 
     if exp of OpGet:
@@ -34,8 +34,8 @@ proc eval_calc_expr*(src: openarray[pp_extracted.Block], exp: pp_rules.OpBase
     if not isNil(blk) and len(blk.name) > 0:
         return (n, k, blk.text)
 
-    if exp of OpParse:
-        let tmp = OpParse(exp)
+    if exp of OpConvert:
+        let tmp = OpConvert(exp)
         return ("", "", tmp.name_src)
     elif exp of OpGet:
         let tmp = OpGet(exp)
@@ -47,7 +47,7 @@ proc eval_calc_expr*(src: openarray[pp_extracted.Block], exp: pp_rules.OpBase
 proc eval_calc_str*(src: openarray[pp_extracted.Block], exp: string): string =
     ##[ evaluate the input expression as `exp`
     ]##
-    let (n, k, blk) = eval_calc_get(src, OpParse(name_src: exp))
+    let (n, k, blk) = eval_calc_get(src, OpConvert(name_src: exp))
     discard n
     discard k
     if isNil(blk) or len(blk.text) < 1:

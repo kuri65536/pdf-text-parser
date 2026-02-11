@@ -59,8 +59,8 @@ type
     name*: string
     outs*: seq[TupleXml]
 
-  OpParse* = ref OpParseObj
-  OpParseObj* = object of pp_rules.OpBase
+  OpConvert* = ref OpConvertObj
+  OpConvertObj* = object of pp_rules.OpBase
     name*: string
     name_src*: string
     typ*: parse_kind

@@ -9,7 +9,7 @@ import pdf_doc
 import pdf_get_text
 import pdf_page
 
-import app_extract_pairs
+import pp_extract_pairs
 import pp_extracted
 import pp_rules
 
@@ -50,7 +50,7 @@ proc extract_blocks_in_a_rule*(page: PdfPage, rule: pp_rules.Rule
             if op of pp_rules.OpExtract:
                 extract_block(page, OpExtract(op))
             elif op of pp_rules.OpPairs:
-                app_extract_pairs.extract_pairs(page, OpPairs(op))
+                pp_extract_pairs.extract_pairs(page, OpPairs(op))
             else:
                 continue
         if isNil(blk):

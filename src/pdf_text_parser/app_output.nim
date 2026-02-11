@@ -1,24 +1,20 @@
-##[ app_format.nim
+##[ app_output.nim
 
 License: MIT, see LICENSE
 ]##
 import streams
 
 import pp_extracted
+import pp_output
 import pp_output_csv
 import pp_output_json
 import pp_output_xml
 import pp_rules
 
-
-type
-  output_options* = enum
-    output_head
-    output_tail
-    output_inter
+export output_options
 
 
-proc format_op(fp: Stream, op: pp_rules.OpBase,
+proc output_op(fp: Stream, op: pp_rules.OpBase,
                src: openarray[pp_extracted.Block],
                opts: set[output_options]): void =
     ##[ runs the operation for input blocks.
@@ -30,27 +26,17 @@ proc format_op(fp: Stream, op: pp_rules.OpBase,
         let tmp = pp_output_xml.output(op, src)
         fp.write(tmp)
     elif op of pp_rules.OpOutputJson:
-        if opts.contains(output_head):
-            let s = pp_output_json.output_header(op)
-            fp.write(s)
-        elif opts.contains(output_inter) or opts.contains(output_tail):
-            let s = pp_output_json.output_inter(op)
-            fp.write(s)
-        let tmp = pp_output_json.output(op, src)
-        fp.write(tmp)
-        if opts.contains(output_tail):
-            let s = pp_output_json.output_footer(op)
-            fp.write(s)
+        pp_output_json.output(fp, op, src, opts)
     else:
         discard
 
 
-proc format*(fp: Stream, rules: openarray[pp_rules.Rule],
+proc output*(fp: Stream, rules: openarray[pp_rules.Rule],
              src: openarray[pp_extracted.Block],
              opts: set[output_options]): void =
     ##[ outputs the extracted and parsed blocks with specified rules.
     ]##
     for rule in rules:
         for op in rule.ops:
-            format_op(fp, op, src, opts)
+            output_op(fp, op, src, opts)
 

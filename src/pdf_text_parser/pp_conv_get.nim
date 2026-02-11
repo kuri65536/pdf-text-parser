@@ -8,7 +8,7 @@ import pp_extracted
 import pp_rules
 
 
-proc parse*(op: pp_rules.OpGet,
+proc convert*(op: pp_rules.OpGet,
             src: openarray[pp_extracted.Block]): pp_extracted.Block =
     ##[
     ]##

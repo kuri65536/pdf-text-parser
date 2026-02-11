@@ -51,7 +51,7 @@ proc parse_calc_expr*(val: string): pp_rules.OpBase =
     let tmp = parse_calc_expr_tableget(val)
     if not isNil(tmp):
         return tmp
-    return OpParse(
+    return OpConvert(
         name: "---", name_src: val,
     )
 

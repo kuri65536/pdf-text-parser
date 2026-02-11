@@ -8,9 +8,9 @@ import std/paths
 import std/streams
 import system
 
+import pdf_text_parser/app_convert
 import pdf_text_parser/app_extract
-import pdf_text_parser/app_format
-import pdf_text_parser/app_parse
+import pdf_text_parser/app_output
 import pdf_text_parser/options
 
 
@@ -26,8 +26,8 @@ proc main(args: seq[string]): int =
     proc proc1(filename: Path, outs: set[output_options]): void =
         debug("main: extract 1 PDF " & filename.string)
         let blks = app_extract.extract_blocks(opts.rules, filename)
-        let blk2 = app_parse.parse(opts.rules, blks)
-        app_format.format(strm, opts.rules, blk2, outs)
+        let blk2 = app_convert.parse(opts.rules, blks)
+        app_output.output(strm, opts.rules, blk2, outs)
 
     if len(opts.filenames) < 1:
         return 1

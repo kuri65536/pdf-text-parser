@@ -74,7 +74,7 @@ proc eval_calc_cond*(src: openarray[pp_extracted.Block],
                       cond_expr: pp_rules.OpBase): bool =
     ##[ evaluate the condition expression
     ]##
-    let (op, ls, rs) = eval_calc_cond_split(OpParse(cond_expr).name_src)
+    let (op, ls, rs) = eval_calc_cond_split(OpConvert(cond_expr).name_src)
     if op == "<>" and rs == "\"\"":
         let blk = pp_extracted.find(src, ls)
         return len(blk.name) > 0

@@ -1,4 +1,4 @@
-##[ app_format_csv.nim
+##[ pp_output_csv.nim
 
 License: MIT, see LICENSE
 ]##

@@ -3,7 +3,9 @@
 License: MIT, see LICENSE
 ]##
 import json
+import std/streams
 
+import pp_output
 import pp_extracted
 import pp_format
 import pp_rules
@@ -36,10 +38,10 @@ proc output_footer*(op: OpBase): string =
     return "]"
 
 
-proc output*(op: OpBase, src: openarray[pp_extracted.Block]): string =
+proc output_single(op: pp_rules.OpOutputJson,
+                   src: openarray[pp_extracted.Block]): string =
     ##[ outputs the blocks data with the JSON format.
     ]##
-    let op = OpOutputJson(op)
     let sfx = if op.f_space: "\n" else: ""
     let pfx = if op.f_space: "  " else: ""
     let sep = if op.f_space: " " else: ""
@@ -58,4 +60,23 @@ proc output*(op: OpBase, src: openarray[pp_extracted.Block]): string =
                      json.escapeJson(tx2)
     ret &= sfx & "}"
     return ret
+
+
+proc output*(strm: Stream, op: pp_rules.OpBase,
+             src: openarray[pp_extracted.Block],
+             opts: set[output_options]): void =
+    ##[ outputs the blocks data with the JSON format with delimiters
+    ]##
+    let op = pp_rules.OpOutputJson(op)
+    if opts.contains(output_head):
+        let s = output_header(op)
+        strm.write(s)
+    elif opts.contains(output_inter) or opts.contains(output_tail):
+        let s = output_inter(op)
+        strm.write(s)
+    let tmp = output_single(op, src)
+    strm.write(tmp)
+    if opts.contains(output_tail):
+        let s = output_footer(op)
+        strm.write(s)
 

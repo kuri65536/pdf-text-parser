@@ -1,4 +1,4 @@
-##[ pp_parse.nim
+##[ pp_parse_convert.nim
 
 License: MIT, see LICENSE
 ]##
@@ -9,7 +9,7 @@ import pp_rules
 
 
 const
-    identifier* = "parse"
+    identifier* = "convert"
 
 
 proc parse_type*(val: string): pp_rules.parse_kind =
@@ -23,14 +23,14 @@ proc parse_type*(val: string): pp_rules.parse_kind =
     return pp_rules.parse_kind.prk_string
 
 
-proc parse_op*(val: string): OpParse =
+proc parse_op*(val: string): OpConvert =
     ##[ parses the `val` as `parse` rule in a opt-val pair.
     ]##
     let tmp = pp_rules.split_to_cells(val)
     if len(tmp) < 4:
         return nil
 
-    return OpParse(name: tmp[0],
+    return OpConvert(name: tmp[0],
                       name_src: tmp[1],
                       typ: parse_type(tmp[2]),
                       fmt_parse: tmp[3],

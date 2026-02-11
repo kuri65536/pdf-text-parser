@@ -12,9 +12,9 @@ import tables
 import pp_inifile
 import pp_rules
 import pp_parse_calc
+import pp_parse_convert
 import pp_parse_expand
 import pp_parse_pairs
-import pp_parse_parse
 import pp_parse_output
 import pp_parse_output_json
 import pp_parse_output_xml
@@ -81,8 +81,8 @@ proc parse_op(tbl: SectionTable, key, val: string): pp_rules.OpBase =
         return parse_get_op(val)
     of pp_parse_pairs.identifier:
         return pp_parse_pairs.parse_op(val)
-    of pp_parse_parse.identifier:
-        return pp_parse_parse.parse_op(val)
+    of pp_parse_convert.identifier:
+        return pp_parse_convert.parse_op(val)
     of pp_parse_output.identifier:
         return pp_parse_output.parse_op(val)
     of pp_parse_output_json.identifier:

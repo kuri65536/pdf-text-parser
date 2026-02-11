@@ -25,7 +25,7 @@ proc parse_value*(src: pp_extracted.Block): float =
             NaN
 
 
-proc parse*(op: pp_rules.OpCalc,
+proc convert*(op: pp_rules.OpCalc,
             src: openarray[pp_extracted.Block]): pp_extracted.Block =
     ##[ calculate the specified `Block` values
 
@@ -44,8 +44,8 @@ proc parse*(op: pp_rules.OpCalc,
                 return pp_extracted.Block(name: op.name_dest, text: tmp)
     for i in op.exprs:
         let (n, k, blk) = block:
-            if i of OpParse:
-                let name = OpParse(i).name_src
+            if i of OpConvert:
+                let name = OpConvert(i).name_src
                 (name, "", pp_extracted.find(src, name))
             elif i of OpGet:
                 let op = OpGet(i)
