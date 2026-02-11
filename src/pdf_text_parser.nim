@@ -5,6 +5,7 @@ License: MIT, see LICENSE
 import logging
 import os
 import std/paths
+import std/streams
 import system
 
 import pdf_text_parser/app_extract
@@ -19,22 +20,25 @@ proc main(args: seq[string]): int =
         return opts.n_quit
     info("main: loop over " & $len(opts.filenames))
 
-    proc proc1(filename: Path, f_head, f_tail: bool): void =
+    let strm = openFileStream("/dev/stdout", fmWrite)
+    defer: strm.close()
+
+    proc proc1(filename: Path, outs: set[output_options]): void =
         debug("main: extract 1 PDF " & filename.string)
         let blks = app_extract.extract_blocks(opts.rules, filename)
         let blk2 = app_parse.parse(opts.rules, blks)
-        app_format.format(opts.rules, blk2, f_head, f_tail)
+        app_format.format(strm, opts.rules, blk2, outs)
 
     if len(opts.filenames) < 1:
         return 1
     if len(opts.filenames) < 2:
-        proc1(opts.filenames[0], true, true)
+        proc1(opts.filenames[0], {})
         return 0
 
-    proc1(opts.filenames[0], true, false)
+    proc1(opts.filenames[0], {output_head})
     for i in opts.filenames[1 ..^  2]:
-        proc1(i, false, false)
-    proc1(opts.filenames[^1], false, true)
+        proc1(i, {output_inter})
+    proc1(opts.filenames[^1], {output_tail})
     return 0
 
 
