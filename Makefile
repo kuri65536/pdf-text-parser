@@ -42,6 +42,9 @@ run:     $(exe)
 	#/$(exe) -r tests/rule4.ini -o test1.pdf tests/test1.pdf -V 4
 	./$(exe) $(args)
 
+debug:   $(exe)
+	nim-gdb --args $(exe) $(args)
+
 build:   $(exe)
 
 test:    export PATH:=$(PATH):/usr/local/bin

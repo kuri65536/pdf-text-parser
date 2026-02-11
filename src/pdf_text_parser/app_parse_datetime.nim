@@ -17,8 +17,12 @@ proc parse*(fmt, src: string): times.DateTime =
         return times.now()
     try:
         return times.parse(src, fmt)
-    except TimeFormatParseError:
+    except TimeParseError:
         error("parse:datetime: can't parse: " & fmt & "," & src &
+              "=>" & getCurrentExceptionMsg())
+        return times.now()
+    except TimeFormatParseError:
+        error("parse:datetime: format error: " & fmt & "," & src &
               "=>" & getCurrentExceptionMsg())
         return times.now()
 
