@@ -305,24 +305,24 @@ The result can be obtained by specifying the `key` value.
 -----
 
 
-#### The Rule: 'parse'
+#### The Rule: 'convert'
 
-This rule specifies the parse operation for the extracted text.
+This rule specifies the convert operation for the extracted text.
 
 ```text
-parse = [new_name], [source_name], [type], [format1], [format2]
+convert = [new_name], [source_name], [type], [input], [output]
 
-parse = name2, name1, date-time, yyyy/mm/dd, yyyy
-parse = name3, name1, date-time, yyyy/mm/dd, mm
+convert = name2, name1, date-time, yyyy/mm/dd, yyyy
+convert = name3, name1, date-time, yyyy/mm/dd, mm
 ```
 
 | Position | Value   | Description   |
 |:--------:|:-------:|:-------------:|
-| 1  | `new_name`    | The name of the new parsed text |
-| 2  | `source_name` | The variable name from `extract` to parse |
-| 3  | `type`        | the data type to parse, see   |
-| 4  | `format1`     | the *input* format to parse   |
-| 5  | `format2`     | the *output* format to output |
+| 1  | `new_name`    | The name of the new converted text |
+| 2  | `source_name` | The variable name from `extract` or etc. |
+| 3  | `type`        | The data type of convert, see the next table  |
+| 4  | `input`       | The *input* option for convert   |
+| 5  | `output`      | The *output* option after convert |
 
 the format text depends on the `type` specified.
 
@@ -332,12 +332,34 @@ the format text depends on the `type` specified.
 | string    | Parses a string. |
 
 
-- Parsing `date-time` just passes the format parameter to
-    the nim-lang `times.parse` function.  
-    please check the
-    [nim-lang times.parse](https://nim-lang.org/docs/times.html#parsing-and-formatting-dates)
-    function manual.
+##### Input and Output options with the date-time type
+The input option is just passed to the nim-lang `times.parse` function.  
+please check the
+[nim-lang times.parse](https://nim-lang.org/docs/times.html#parsing-and-formatting-dates)
+function manual.
 
+**Output option**
+
+The resulting date-time object is passed to the nim-lang `times.format`
+function with the output option string,
+and the result stored in the `new_name` variable.
+
+
+##### Input and Output option with the string type
+The string type performs a `sed`-like replacement. (Regex-based)
+
+Specify a `sed` expression in the input option:
+
+- `/abc//` ... remove `abc` string
+- `/.*abc//` ... remove string ends with `abc` from the `source_name` variable
+
+**Output option**
+
+Use `%s` as a placeholder to format the result
+in the `new_name` variable:
+
+- `%s` ... Stores the converted string directly.
+- `AA%sAA` ... Wraps the converted string with "AA" (e.g., AAvalueAA).
 
 
 
@@ -410,14 +432,12 @@ Roadmap (Under Construction)
 
 The following features are planned:
 
-- JSON output format.
-- True poppler-API access to get bounding box in PDF.
-- Cache the bounding box contents in PDFDoc
+- True poppler-API access to get bounding boxes in PDF.
+- Cache the bounding boxes data in PDFDoc
 - Refactor the rule structure
 - Add the page parameters to the pairs
 - Add the page parameters to the extract
 - Concat text within the specified range
-- Extract the table contents
 - Output sub items from the table for XML and JSON
 
 
