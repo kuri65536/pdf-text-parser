@@ -1,10 +1,10 @@
-##[ test_output_json.nim
+##[ test_output_json1.nim
 
 License: MIT, see LICENSE
 ]##
 import streams
 
-import ../src/pdf_text_parser/app_format
+import ../src/pdf_text_parser/app_output
 import ../src/pdf_text_parser/pp_extracted
 import ../src/pdf_text_parser/pp_rules
 
@@ -21,7 +21,7 @@ block:
         )]
     )]
     var strm = newStringStream()
-    app_format.format(strm, rules, blks, {})
+    app_output.output(strm, rules, blks, {})
     strm.setPosition(0)
     let s = strm.readAll()
     assert s == """{"c":"1","d":"2"}""", "error: " & s
@@ -40,7 +40,7 @@ block:
         )]
     )]
     var strm = newStringStream()
-    app_format.format(strm, rules, blks, {})
+    app_output.output(strm, rules, blks, {})
     strm.setPosition(0)
     let s = strm.readAll()
     assert s == """{
