@@ -33,7 +33,7 @@ proc format_op(fp: Stream, op: pp_rules.OpBase,
         if opts.contains(output_head):
             let s = pp_output_json.output_header(op)
             fp.write(s)
-        elif opts.contains(output_inter):
+        elif opts.contains(output_inter) or opts.contains(output_tail):
             let s = pp_output_json.output_inter(op)
             fp.write(s)
         let tmp = pp_output_json.output(op, src)
