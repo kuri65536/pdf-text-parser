@@ -21,10 +21,12 @@ src:=src/pdf_text_parser.nim \
      src/pdf_text_parser/pp_format.nim \
      src/pdf_text_parser/pp_inifile.nim \
      src/pdf_text_parser/pp_output_csv.nim \
+     src/pdf_text_parser/pp_output_json.nim \
      src/pdf_text_parser/pp_output_xml.nim \
      src/pdf_text_parser/pp_parse_calc.nim \
      src/pdf_text_parser/pp_parse_expand.nim \
      src/pdf_text_parser/pp_parse_output.nim \
+     src/pdf_text_parser/pp_parse_output_json.nim \
      src/pdf_text_parser/pp_parse_output_xml.nim \
      src/pdf_text_parser/pp_parse_pairs.nim \
      src/pdf_text_parser/pp_parse_parse.nim \

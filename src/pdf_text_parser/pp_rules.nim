@@ -48,6 +48,11 @@ type
   OpOutputCsvObj* = object of pp_rules.OpBase
     outs*: seq[TupleCsv]
 
+  OpOutputJson* = ref OpOutputJsonObj
+  OpOutputJsonObj* = object of pp_rules.OpBase
+    f_space*: bool
+    outs*: seq[TupleJson]
+
   OpOutputXml* = ref OpOutputXmlObj
   OpOutputXmlObj* = object of pp_rules.OpBase
     f_space*: bool
@@ -71,6 +76,8 @@ type
     base_diff*: float
 
   TupleCsv = tuple[name, fmt: string]
+
+  TupleJson = tuple[name, tag, fmt: string]
 
   TupleXml = tuple[name, tag, fmt: string]
 
