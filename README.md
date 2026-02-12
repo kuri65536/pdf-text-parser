@@ -425,6 +425,145 @@ the operators and expected results.
 ---
 
 
+#### The Rule: 'output_csv'
+This rule specifies the CSV output format for the extracted text.
+
+```text
+output_csv = [term1], [term2], [term3] ...
+
+; example
+output_csv = aaa:bbb, fff:ggg, kkk:mmm
+```
+
+| Option     | Description   |
+|:----------:|:-------------:|
+| `termN`    | a variable to output and its format string (e.g., `variable:format` |
+
+
+**Example**
+
+Given the following extracted variables:
+
+```JSON
+{"aaa": "this is a", "fff": "two", "kkk": "3"}
+```
+
+If the `output_csv = aaa, fff:5, s:---, kkk:3` was specified, the outpue will be:
+
+```text
+this is a,  two,---,  3
+```
+
+
+**Format string**
+
+- `''`   ... When blank or not specified, just output the raw variable content.
+- `----` ... Pads or aligns the output to the length of the string (e.g., 4 characters)
+- `6`    ... Pads or aligns the output to specific number of characters (e.g., 6 characters)
+
+Note on Missing Data:  
+If a variable is empty or not found in the extracted data,
+the format string itself will be used as the output
+(e.g., a format of `---` will output `---`, a format of `6` will output `6` ).
+
+
+---
+
+
+#### The Rule: 'output_xml'
+This rule specifies the XML output format for the extracted text.
+
+```text
+output_xml = [root_tag], [term1], [term2], [term3] ...
+```
+
+| Option     | Description   |
+|:----------:|:-------------:|
+| `root_tag` | The name of the root XML element |
+| `termN`    | Maps a variable to an XML element (e.g., `variable:tag` |
+| `--spaces` | Enable pretty-print (indented) output. |
+
+
+**Example 1**
+
+Given the following extracted variables:
+
+```JSON
+{"aaa": "this is a", "fff": "two", "kkk": "3"}
+```
+
+If the `output_xml = sample1, aaa:bbb, fff:ggg, kkk:mmm` was specified,
+the outpue will be:
+
+```text
+<sample1><bbb>this is a</bbb><ggg>two</ggg><mmm>3</mmm></sample1>
+```
+
+**Example 2 (pretty print)**
+
+Given the following extracted variables:
+
+```JSON
+{"a": "1", "c": "2"}
+```
+
+If the `output_xml = sample2, --spaces, a:b, c:d` was specified,
+the outpue will be:
+
+```text
+<sample2>
+  <b>1</b>
+  <d>2</d>
+</sample2>
+```
+
+
+
+---
+
+
+#### The Rule: 'output_json'
+This rule specifies the output operation for the extracted text.
+
+```text
+output_json = [term1], [term2], [term3] ...
+
+; case 1
+output_json = aaa:bbb, fff:ggg, kkk:mmm
+; case 2
+output_json = --spaces, a:b, c:d
+```
+
+| Term value     | Description   |
+|:--------------:|:-------:|:-------------:|
+| `name:attr`    | Output the variable `name` as an JSON object attribute |
+| `--spaces`     | Enable pretty-print (indented) output |
+
+When the extracted variables are below,
+
+```text
+// case 1
+{"aaa": "this is a", "fff": "two", "kkk": "3"}
+// case 2
+{"a": "1", "c": "2"}
+```
+
+The resulting output are:
+
+```text
+// case 1
+{"bbb":"this is a","ggg":"two","mmm":"3"}
+// case 2
+{
+  "b": "1",
+  "d": "2"
+}
+```
+
+
+---
+
+
 Roadmap (Under Construction)
 -----------------------------------------
 
