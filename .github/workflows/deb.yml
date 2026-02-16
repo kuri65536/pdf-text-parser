@@ -1,0 +1,66 @@
+name: CI to build deb package
+
+on:
+  push:
+    tags:
+      - "v*"
+env:
+  nimlatest: "2.0.4"
+
+jobs:
+  build_deb:
+    strategy:
+      matrix:
+        nimver: ["2.0.4"]
+    runs-on: ubuntu-latest  ## debian-12, ubuntu-24.04 <- debian-13
+    permissions:
+      contents: write
+
+    steps:
+    - name: set release name
+      id: vars
+      run: |
+        TAG=${{ github.ref_name }}
+        ver=$(echo "$TAG" | sed 's/^v//' | sed 's/\.\([0-9]*\)$/-\1/')
+        echo "ver=${ver}" >> $GITHUB_OUTPUT
+        if   [ "${{ runner.arch }}" = "X64" ]; then tmp=amd64;
+        elif [ "${{ runner.arch }}" = "ARM64" ]; then tmp=arm64;
+        else tmp=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]'); fi
+        echo "arch=${tmp}" >> $GITHUB_OUTPUT
+
+    - uses: actions/checkout@v4
+    - name: install packages
+      run:  |
+            sudo apt-get update
+            sudo apt-get install -y libpoppler-glib-dev poppler-utils
+            sudo apt-get install -y debmake
+            sudo apt-get install -y debhelper-compat
+
+    - uses: iffy/install-nim@v5
+      with:
+        version: ${{ matrix.nimver }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: make hash for this environment
+      run: |
+          nim --version > nim-version.txt
+
+    - uses: actions/cache@v4
+      with:
+        path: /usr/bin
+        key:  ${{ runner.os }}-build-${{ hashFiles('nim-version.txt') }}
+    - name: build
+      run:  nimble build
+    - name: package
+      run:  make deb
+#     run:  make deb opts_debuild="--prepend-path=$HOME/.nimble/bin"  ## not work
+
+    - name: upload deb to release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: build/pdf-text-parser_${{steps.vars.outputs.ver}}_${{steps.vars.outputs.arch}}.deb
+        body:  "release ${{ github.ref_name }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

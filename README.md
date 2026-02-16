@@ -71,6 +71,7 @@ Installation
 
 ```shell
 $ sudo apt install libpoppler-glib-dev
+$ sudo apt install poppler-utils
 ```
 
 - 2. Install Nim (>= 2.0.2)
@@ -578,6 +579,7 @@ The following features are planned:
 - Add the page parameters to the extract
 - Concat text within the specified range
 - Output sub items from the table for XML and JSON
+- Change the function `pp_format.format` to more famous format sytax
 
 
 

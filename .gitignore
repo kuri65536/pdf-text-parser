@@ -1,4 +1,5 @@
 /build/p*
+/csource
 /html
 /nimcache
 /pdf-text-parser

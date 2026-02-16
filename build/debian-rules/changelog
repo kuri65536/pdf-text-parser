@@ -1,6 +1,23 @@
+pdf-text-parser (0.3-0) UNRELEASED; urgency=low
+
+  * Enable output XML and JSON
+
+ -- shimoda <kuri65536@hotmail.com>  Thu, 12 Feb 2026 07:59:23 +0900
+
+pdf-text-parser (0.2-0) UNRELEASED; urgency=low
+
+  * Enable extracting text bounding box pairs
+
+ -- shimoda <kuri65536@hotmail.com>  Wed, 28 Jan 2026 07:16:29 +0900
+
+pdf-text-parser (0.1-2) UNRELEASED; urgency=low
+
+  * Enable expanding the section contents
+
+ -- shimoda <kuri65536@hotmail.com>  Thu, 13 Nov 2025 20:16:28 +0900
+
 pdf-text-parser (0.1-1) UNRELEASED; urgency=low
 
-  * Initial release. Closes: #nnnn
-    <nnnn is the bug number of your ITP>
+  * Initial release.
 
  -- shimoda <kuri65536@hotmail.com>  Fri, 14 Mar 2025 21:22:29 +0900
