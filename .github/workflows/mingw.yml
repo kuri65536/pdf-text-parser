@@ -1,0 +1,70 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+    # tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+    # tags: [ "v*" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: set release name
+      id: vars
+      run: |
+        TAG=${{ github.ref_name }}
+        ver=$(echo "$TAG" | sed 's/^v//' | sed 's/\.\([0-9]*\)$/-\1/')
+        echo "ver=${ver}" >> $GITHUB_OUTPUT
+        if   [ "${{ runner.arch }}" = "X64" ]; then tmp=x86_64;
+        elif [ "${{ runner.arch }}" = "ARM64" ]; then tmp=arm64;
+        else tmp=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]'); fi
+        echo "verarch=${ver}-mingw-${tmp}" >> $GITHUB_OUTPUT
+
+    - name: install nim
+      uses: iffy/install-nim@v5
+      with:
+        version: "2.0.4"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: install packages and save the hash key
+      run:  |
+            sudo apt-get update
+            sudo apt-get install -y mingw-w64
+            sudo apt-get install -y mingw-w64-x86_64-poppler
+            nim --version > nim-version.txt
+
+    - uses: actions/cache@v4
+      with:
+        path: /usr/bin
+        key:  ${{ runner.os }}-build-${{ hashFiles('nim-version.txt' }}
+
+    - name: build
+      run:  |
+        nim c -o:pdf-text-parser.exe \
+          --gcc.exe:x86_64-w64-mingw32-gcc \
+          --gcc.linkerexe:x86_64-w64-mingw32-gcc \
+          src/pdf_text_parser.nim
+        zip -j "pdf-text-parser_${{steps.vars.outputs.verarch}}.zip" \
+               pdf-text-parser.exe \
+               /usr/x86_64-w64-mingw32/bin/libpoppler-glib.dll \
+               /usr/x86_64-w64-mingw32/bin/pdftotext.exe \
+
+    - name: upload deb to release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: pdf-text-parser_${{steps.vars.outputs.verarch}}.zip
+        body:  "release ${{ github.ref_name }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
