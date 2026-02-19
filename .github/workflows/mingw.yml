@@ -2,7 +2,7 @@ name: Makefile CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "kuri65536-patch-1" ]
     # tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
