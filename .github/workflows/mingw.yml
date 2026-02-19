@@ -16,17 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: set release name
-      id: vars
-      run: |
-        TAG=${{ github.ref_name }}
-        ver=$(echo "$TAG" | sed 's/^v//' | sed 's/\.\([0-9]*\)$/-\1/')
-        echo "ver=${ver}" >> $GITHUB_OUTPUT
-        if   [ "${{ runner.arch }}" = "X64" ]; then tmp=x86_64;
-        elif [ "${{ runner.arch }}" = "ARM64" ]; then tmp=arm64;
-        else tmp=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]'); fi
-        echo "verarch=${ver}-mingw-${tmp}" >> $GITHUB_OUTPUT
-
     - name: install nim
       uses: iffy/install-nim@v5
       with:
@@ -46,13 +35,31 @@ jobs:
         path: /usr/bin
         key:  ${{ runner.os }}-build-${{ hashFiles('nim-version.txt') }}
 
+    - name: set release name
+      id: vars
+      run: |
+        TAG=${{ github.ref_name }}
+        ver=$(echo "$TAG" | sed 's/^v//' | sed 's/\.\([0-9]*\)$/-\1/')
+        echo "ver=${ver}" >> $GITHUB_OUTPUT
+        if   [ "${{ runner.arch }}" = "X64" ]; then tmp=x86_64;
+        elif [ "${{ runner.arch }}" = "ARM64" ]; then tmp=arm64;
+        else tmp=$(echo ${{ runner.arch }} | tr '[:upper:]' '[:lower:]'); fi
+        echo "verarch=${ver}-mingw-${tmp}" >> $GITHUB_OUTPUT
+        echo "pkg=pdf-text-parser-${ver}-mingw-${tmp}" >> $GITHUB_OUTPUT
+
     - name: build
       run:  |
         nim c -o:pdf-text-parser.exe \
           --gcc.exe:x86_64-w64-mingw32-gcc \
           --gcc.linkerexe:x86_64-w64-mingw32-gcc \
           src/pdf_text_parser.nim
-        zip -j "pdf-text-parser_${{steps.vars.outputs.verarch}}.zip" \
+
+    - name: list
+      run: x86_64-w64-mingw32-objdump -p pdf-text-parser.exe | grep "DLL Name"
+          
+    - name: pack
+      run: |
+        zip -j "${{steps.vars.outputs.pkg}}.zip" \
                pdf-text-parser.exe \
                /usr/x86_64-w64-mingw32/bin/libpoppler-glib.dll \
                /usr/x86_64-w64-mingw32/bin/pdftotext.exe \
